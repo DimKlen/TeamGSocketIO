@@ -9,8 +9,8 @@ export class WebSocketServiceService {
 
   socket: any;
 
-  constructor() { 
-    if(null == this.socket) {
+  constructor() {
+    if (null == this.socket) {
       this.socket = io();
     }
   }
@@ -24,6 +24,6 @@ export class WebSocketServiceService {
   }
 
   emit(eventName: string, data: any) {
-    this.socket.emit(eventName,data);
+    this.socket.emit(eventName, data);
   }
 }

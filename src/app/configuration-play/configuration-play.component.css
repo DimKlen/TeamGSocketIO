@@ -1,0 +1,83 @@
+.dialog-layout {
+    display: grid;
+    height: 60vh;
+    grid-template-columns: 2fr 3fr 2fr ;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+  }
+
+.dialog-title {
+    grid-column-start: 1;
+    grid-column-end: span col3-start;
+    grid-row: 1;
+    align-self: center;
+    justify-self: center;
+  }
+
+  /**
+  * Civil css
+  */
+  .dialog-civil {
+    grid-column-start: 2;
+    grid-row: 2;
+    align-self: center;
+    justify-self: center;
+  }
+
+  /**
+  * UC css
+  */
+  .dialog-uc {
+    grid-column-start: 2;
+    grid-row: 3;
+    align-self: center;
+    justify-self: center;
+  }
+
+  .more-uc {
+    background-color: black;
+    grid-column-start: 2;
+    grid-row: 3;
+    align-self: center;
+    justify-self: start;
+  }
+
+  .less-uc {
+    background-color: black;
+    grid-column-start: 2;
+    grid-row: 3;
+    align-self: center;
+    justify-self: end;
+  }
+
+  /**
+  * White css
+  */
+  .dialog-white {
+    grid-column-start: 2;
+    grid-row: 4;
+    align-self: center;
+    justify-self: center;
+  }
+
+  .more-white {
+    background-color: pink;
+    grid-column-start: 2;
+    grid-row: 4;
+    align-self: center;
+    justify-self: start;
+  }
+
+  .less-white {
+    background-color: pink;
+    grid-column-start: 2;
+    grid-row: 4;
+    align-self: center;
+    justify-self: end;
+  }
+
+  .dialog-ok {
+    grid-column-start: 2;
+    grid-row: 5;
+    align-self: center;
+    justify-self: stretch;
+  }

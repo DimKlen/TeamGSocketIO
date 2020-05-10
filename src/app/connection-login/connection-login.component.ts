@@ -18,9 +18,9 @@ export class ConnectionLoginComponent implements OnInit {
   }
 
   rejoindre(): void {
-    if(this.nameInput) {
+    if (this.nameInput) {
       //Emit loged event to notif server with a new user
-      this.webSocketService.emit('loged',new User(this.nameInput));
+      this.webSocketService.emit('loged', new User(this.nameInput));
       //TODO if server up then navigate
       this.router.navigateByUrl("/undercover");
     }

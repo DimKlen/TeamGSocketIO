@@ -22,8 +22,8 @@ export class DataServiceService {
   }
 
   removeUser(user: User) {
-    if(this.users) {
-      this.users.splice(this.users.findIndex(item => item.id ==user.id),1);
+    if (this.users) {
+      this.users.splice(this.users.findIndex(item => item.id == user.id), 1);
     }
   }
 

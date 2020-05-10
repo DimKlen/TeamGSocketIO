@@ -6,11 +6,11 @@ export class User {
 
     constructor(name: string) {
         this.name = name;
-        this.avatar = 'https://api.adorable.io/avatars/'+this.randomAvatar();
+        this.avatar = 'https://api.adorable.io/avatars/' + this.randomAvatar();
         //TODO ID
     }
 
     private randomAvatar(): number {
-        return Math.floor(Math.random() * 1000) + 1 
-      }
+        return Math.floor(Math.random() * 1000) + 1
+    }
 }

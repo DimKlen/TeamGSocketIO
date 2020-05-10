@@ -1,12 +1,19 @@
-<h1 mat-dialog-title>Nombre de joueurs : {{nombreJoueurs}}</h1>
-<div mat-dialog-content>
-  <p>What's your favorite animal?</p>
-  <mat-form-field>
-    <mat-label>Favorite Animal</mat-label>
-    <input matInput>
-  </mat-form-field>
-</div>
-<div mat-dialog-actions>
-  <button mat-button>No Thanks</button>
-  <button mat-button cdkFocusInitial>Ok</button>
+<div class="dialog-layout">
+  <h2 mat-dialog-title class="dialog-title">Nombre de joueurs : {{nombreJoueurs}}</h2>
+  <!-- <div mat-dialog-content> -->
+  <label mat-label class="dialog-civil">{{nombreCivil}} Civils</label>
+  <!-- </div> -->
+  <!-- <div mat-dialog-content> -->
+  <button mat-mini-fab class="more-uc" (click)="ucUp()">+</button>
+  <label mat-label class="dialog-uc">{{nombreUc}} Undercovers</label>
+  <button mat-mini-fab class="less-uc" (click)="ucDown()">-</button>
+  <!-- </div> -->
+  <!-- <div mat-dialog-content> -->
+  <button mat-mini-fab class="more-white" (click)="whiteUp()">+</button>
+  <label mat-label class="dialog-white">{{nombreWhite}} Mr. White</label>
+  <button mat-mini-fab class="less-white" (click)="whiteDown()">-</button>
+  <!-- </div> -->
+  <!-- <div mat-dialog-actions> -->
+  <button mat-raised-button color="primary" class="dialog-ok">Ok</button>
+  <!-- </div> -->
 </div>

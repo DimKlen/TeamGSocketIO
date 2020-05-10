@@ -11,14 +11,15 @@ export class MainContentComponent implements OnInit {
 
   constructor(public dialog: MatDialog) {
     const dialogRef = this.dialog.open(ConfigurationPlayComponent, {
-      width: '800px',
-      height: '600px'
+      disableClose: true,
+      width: '600px',
+      height: '500px'
     });
-   }
+  }
 
   ngOnInit(): void {
   }
 
-  
+
 
 }
