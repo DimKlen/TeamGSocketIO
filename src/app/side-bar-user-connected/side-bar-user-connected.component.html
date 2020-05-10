@@ -1,0 +1,10 @@
+<mat-list>
+    <div mat-subheader>Joueurs</div>
+    <mat-divider></mat-divider>
+    <mat-list-item *ngFor="let user of users">
+      <div mat-line>{{user.name}}</div>
+      <div mat-line>{{user.score}}</div>
+      <img matListAvatar src={{user.avatar}}>
+      <mat-divider></mat-divider>
+    </mat-list-item>
+  </mat-list>
