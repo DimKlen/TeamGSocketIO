@@ -13,7 +13,7 @@ export class MainContentComponent implements OnInit {
     const dialogRef = this.dialog.open(ConfigurationPlayComponent, {
       disableClose: true,
       width: '600px',
-      height: '500px'
+      height: '650px'
     });
   }
 

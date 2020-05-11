@@ -11,7 +11,7 @@ import { DataServiceService } from '../data-service.service';
 export class SideBarUserConnectedComponent implements OnInit {
 
   //User list used to display users
-  users: User[] = [new User("Noir"), new User("Kwenty"), new User("Did"), new User("Geo")];
+  users: User[] = [new User("Noir"), new User("Kwenty")/*, new User("Did"), new User("Geo")*/];
 
   constructor(private webSocketService: WebSocketServiceService, private dataService: DataServiceService) {
   }
