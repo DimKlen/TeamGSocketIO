@@ -10,8 +10,9 @@ import { DataServiceService } from '../data-service.service';
 })
 export class SideBarUserConnectedComponent implements OnInit {
 
-  //User list used to display users
-  users: User[] = [new User("Noir"), new User("Kwenty")/*, new User("Did"), new User("Geo")*/];
+  //User list used to display users //TODO test
+  users: User[] = [/*new User("Noir"), new User("Kwenty"), new User("Did"), new User("Geo"), 
+new User("Samir"), new User("Miky"), new User("Vincent")*/];
 
   constructor(private webSocketService: WebSocketServiceService, private dataService: DataServiceService) {
   }
@@ -19,7 +20,7 @@ export class SideBarUserConnectedComponent implements OnInit {
   ngOnInit(): void {
 
     //TODO test
-    this.dataService.updateData(this.users.length)
+    // this.dataService.updateData(this.users.length)
     /**
      * listen on new user connected and push in users list 
      */

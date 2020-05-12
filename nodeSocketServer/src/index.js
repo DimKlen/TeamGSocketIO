@@ -53,7 +53,19 @@ io.on('connection', (socket) => {
     	users.push(data);
     	//send newusrs event to display current user in current client
     	io.emit('newusrs', data);	
-    })
+    });
+
+    socket.on('upUcFromClient', (data) => {
+    	console.log('server : upUcFromClient');
+    	//send newusrs event to display current user in current client
+    	io.emit('upUcFromServeur', "");	
+    });
+
+    socket.on('downUcFromClient', (data) => {
+    	console.log('server : downUcFromClient');
+    	//send newusrs event to display current user in current client
+    	io.emit('downUcFromServeur', "");	
+    });
     
 
 });

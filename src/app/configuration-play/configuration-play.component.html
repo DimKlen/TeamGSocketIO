@@ -1,13 +1,13 @@
 <div class="dialog-layout">
   <h2 mat-dialog-title class="dialog-title">Nombre de joueurs : {{nombreJoueurs}}
-    <p *ngIf="nombreJoueurs <= '2'">(3 joueurs minimum)</p>
+    <p *ngIf="nombreJoueurs <= 2">(3 joueurs minimum)</p>
   </h2>
   <label mat-label class="dialog-civil">{{nombreCivil}} Civils</label>
-  <button mat-mini-fab class="more-uc" (click)="ucUp()">+</button>
+  <button mat-mini-fab class="more-uc" [disabled]="!isModifiable()" (click)="pushButtonUpUc()">+</button>
   <label mat-label class="dialog-uc">{{nombreUc}} Undercovers</label>
-  <button mat-mini-fab class="less-uc" (click)="ucDown()">-</button>
+  <button mat-mini-fab class="less-uc" [disabled]="!isModifiable()" (click)="pushButtonDownUc()">-</button>
   <button mat-mini-fab disabled class="more-white">+</button>
   <label mat-label disabled class="dialog-white">{{nombreWhite}} Mr. White</label>
   <button mat-mini-fab class="less-white" disabled>-</button>
-  <button mat-raised-button color="primary" class="dialog-ok">Ok</button>
+  <button mat-raised-button color="primary" [disabled]="!isPlayable()" class="dialog-ok">Ok</button>
 </div>
