@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DataServiceService } from '../data-service.service';
 import { WebSocketServiceService } from '../web-socket-service.service';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-configuration-play',
@@ -13,12 +14,13 @@ export class ConfigurationPlayComponent implements OnInit {
   nombreCivil: number = 0;
   nombreUc: number = 0;
   nombreWhite: number = 0;
-  constructor(private dataService: DataServiceService, private webSocketService: WebSocketServiceService) { }
+  constructor(private dataService: DataServiceService, private webSocketService: WebSocketServiceService
+    , private dialogRef: MatDialogRef<ConfigurationPlayComponent>) { }
 
   ngOnInit(): void {
     //get number of players from service
-    this.dataService.userLength.subscribe(result => {
-      this.nombreJoueurs = +result;
+    this.dataService.getArrayUser().subscribe(result => {
+      this.nombreJoueurs = result.length;
       //Init roles by number of players
       switch (this.nombreJoueurs) {
         case 3:
@@ -34,7 +36,7 @@ export class ConfigurationPlayComponent implements OnInit {
           this.initRoles(4, 2, 0)
           break;
         case 7:
-          this.initRoles(5, 3, 0)
+          this.initRoles(5, 2, 0)
           break;
         case 8:
           this.initRoles(5, 3, 0)
@@ -52,6 +54,11 @@ export class ConfigurationPlayComponent implements OnInit {
     this.webSocketService.listen('downUcFromServeur').subscribe((data) => {
       console.log('event : downUcFromServeur');
       this.downUc();
+    });
+
+    this.webSocketService.listen('playReadyFromServeur').subscribe((data) => {
+      console.log('event : playReadyFromServeur');
+      this.dialogRef.close();
     });
   }
 
@@ -81,6 +88,17 @@ export class ConfigurationPlayComponent implements OnInit {
   }
 
   /**
+   * Start the game
+   */
+  play() {
+    if (this.isFullCount()) {
+      //TODO test
+      this.dialogRef.close();
+      this.webSocketService.emit("playReadyFromClient", "");
+    }
+  }
+
+  /**
    * Initialise roles
    * 
    * @param civil number of civil
@@ -97,8 +115,8 @@ export class ConfigurationPlayComponent implements OnInit {
    * Check if is full count
    */
   isFullCount(): boolean {
-    let fullCout = this.nombreUc + this.nombreCivil + this.nombreWhite;
-    if (fullCout >= +this.nombreJoueurs) {
+    let fullCount = this.nombreUc + this.nombreCivil + this.nombreWhite;
+    if (fullCount == this.nombreJoueurs) {
       return true;
     } else { return false }
   }
@@ -121,6 +139,7 @@ export class ConfigurationPlayComponent implements OnInit {
       case 5:
       case 6:
         if (this.nombreUc == 1) {
+          //TODO test
           // this.upUc();
           console.log('more pushed');
           this.webSocketService.emit("upUcFromClient", "");
@@ -129,6 +148,7 @@ export class ConfigurationPlayComponent implements OnInit {
       case 7:
       case 8:
         if (this.nombreUc == 1 || this.nombreUc == 2) {
+          //TODO test
           // this.upUc();
           console.log('more pushed');
           this.webSocketService.emit("upUcFromClient", "");
@@ -145,6 +165,7 @@ export class ConfigurationPlayComponent implements OnInit {
       case 5:
       case 6:
         if (this.nombreUc == 2) {
+          //TODO test
           // this.downUc()
           console.log('less pushed');
           this.webSocketService.emit("downUcFromClient", "");
@@ -153,6 +174,7 @@ export class ConfigurationPlayComponent implements OnInit {
       case 7:
       case 8:
         if (this.nombreUc == 2 || this.nombreUc == 3) {
+          //TODO test
           // this.downUc()
           console.log('less pushed');
           this.webSocketService.emit("downUcFromClient", "");

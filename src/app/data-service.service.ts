@@ -6,28 +6,26 @@ import { User } from './models/User';
   providedIn: 'root'
 })
 export class DataServiceService {
+  userDataSource: BehaviorSubject<User[]> = new BehaviorSubject([]);
+  userData = this.userDataSource.asObservable();
 
-  users: User[] = [];
-  private userLengthSource = new BehaviorSubject<string>('X');
-  userLength = this.userLengthSource.asObservable();
+  usersLength: number = 0;
 
   constructor() { }
 
-  updateData(size) {
-    this.userLengthSource.next(size);
+  addUser(user: User) {
+    const currentValue = this.userDataSource.value;
+    const updatedValue = [...currentValue, user];
+    this.userDataSource.next(updatedValue);
+    this.usersLength++;
   }
 
-  pushUser(user: User) {
-    this.users.push(user);
+  getArrayUser(): Observable<User[]> {
+    return this.userData;
   }
 
-  removeUser(user: User) {
-    if (this.users) {
-      this.users.splice(this.users.findIndex(item => item.id == user.id), 1);
-    }
-  }
-
-  getUsersSize(): number {
-    return this.users.length;
+  updateArrayUser(users: User[]) {
+    this.userDataSource.next(Object.assign([], users));
+    this.usersLength--;
   }
 }

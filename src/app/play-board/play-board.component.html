@@ -1,17 +1,12 @@
-<div>
-    <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-        Nullam dolor velit, suscipit vel ultricies id, ultrices in
-        augue. Aliquam volutpat, nunc id pulvinar tincidunt, leo nunc
-        feugiat libero, quis luctus lectus ipsum et enim.
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-        Nullam dolor velit, suscipit vel ultricies id, ultrices in
-        augue. Aliquam volutpat, nunc id pulvinar tincidunt, leo nunc
-        feugiat libero, quis luctus lectus ipsum et enim.
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-        Nullam dolor velit, suscipit vel ultricies id, ultrices in
-
-        
-
-    </p>
+<div class="flex-container">
+    <div *ngFor="let user of users" class="player-card">
+        <div>
+            <img matListAvatar class="avatar-player" src={{user.avatar}}>
+            <mat-line class="player-name">{{user.name}}</mat-line>
+        </div>
+        <mat-divider></mat-divider>
+    </div>
+</div>
+<div class="div-word">
+    <input type="text" id="response" class="intput-word" placeHolder="Votre mot" (keyup.enter)="submitWord()" required>
 </div>

@@ -106,14 +106,14 @@ body {
   display: grid; /* 1 */
   height: 100vh;
   grid-template-columns: 2fr 10fr ; /* 2 */
-  grid-template-rows: 1fr 10fr 1fr; /* 3 */
+  grid-template-rows: 1fr 10fr; /* 2 */
 }
 
 .header {
   grid-column-start: 1;
   grid-column-end: span col2-start;
   grid-row: 1;
-  padding: 2em;
+  /* padding: 2em; */
   margin: 5px;
 }
 
@@ -123,6 +123,7 @@ body {
   overflow: auto;
   padding: 2em;
   margin: 5px;
+  border-radius: 1%;
 }
 
 .side {
@@ -131,12 +132,13 @@ body {
   overflow: auto;
   padding: 2em;
   margin: 5px;
+  border-radius: 2%;
 }
 
-.footer {
+/* .footer {
   grid-column-start: 1;
   grid-column-end: span col2-start;
   grid-row: 3;
   padding: 2em;
   margin: 5px;
-}
+} */

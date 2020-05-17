@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfigurationPlayComponent } from '../configuration-play/configuration-play.component';
+import { DataServiceService } from '../data-service.service';
 
 @Component({
   selector: 'app-main-content',
@@ -9,17 +10,10 @@ import { ConfigurationPlayComponent } from '../configuration-play/configuration-
 })
 export class MainContentComponent implements OnInit {
 
-  constructor(public dialog: MatDialog) {
-    const dialogRef = this.dialog.open(ConfigurationPlayComponent, {
-      disableClose: true,
-      width: '600px',
-      height: '650px'
-    });
+  constructor() {
   }
 
   ngOnInit(): void {
   }
-
-
 
 }

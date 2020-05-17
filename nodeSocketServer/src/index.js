@@ -55,16 +55,23 @@ io.on('connection', (socket) => {
     	io.emit('newusrs', data);	
     });
 
+    //Listen on up undercover players from client
     socket.on('upUcFromClient', (data) => {
     	console.log('server : upUcFromClient');
-    	//send newusrs event to display current user in current client
+    	//emit up uc to all clients
     	io.emit('upUcFromServeur', "");	
     });
 
+	//Listen on down undercover players from client
     socket.on('downUcFromClient', (data) => {
     	console.log('server : downUcFromClient');
-    	//send newusrs event to display current user in current client
+    	//emit down uc to all clients
     	io.emit('downUcFromServeur', "");	
+    });
+
+    socket.on('playReadyFromClient', (data) => {
+    	console.log('server : playReadyFromClient');
+    	io.emit('playReadyFromServeur', "");	
     });
     
 

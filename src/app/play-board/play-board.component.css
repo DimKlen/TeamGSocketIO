@@ -1,0 +1,36 @@
+  .flex-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .avatar-player {
+      width: 100px;
+      border-radius: 30%;
+      border: 2px solid black;
+  }
+
+  .player-card {
+      border: 2px solid black;
+      border-radius: 10%;
+      margin: 2em;
+      width: 20%;
+      height: 30vh;
+      padding: 15px;
+  }
+
+  .player-name {
+    font-size: 30px;
+    font-weight: bold;
+    padding-left: 1em;
+  }
+
+  .div-word { 
+    text-align: center;
+    margin-top: 1em;
+  }
+
+  .intput-word { 
+    width: 20%;
+    border: 2px solid black;
+  }

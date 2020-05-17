@@ -9,5 +9,5 @@
   <button mat-mini-fab disabled class="more-white">+</button>
   <label mat-label disabled class="dialog-white">{{nombreWhite}} Mr. White</label>
   <button mat-mini-fab class="less-white" disabled>-</button>
-  <button mat-raised-button color="primary" [disabled]="!isPlayable()" class="dialog-ok">Ok</button>
+  <button mat-raised-button color="primary" [disabled]="!isPlayable()" (click)="play()" class="dialog-ok">Ok</button>
 </div>
