@@ -1,7 +1,8 @@
 <mat-list>
   <mat-divider></mat-divider>
   <mat-list-item class="div-list" *ngFor="let user of users">
-    <div class="font" mat-line>{{user.name}}</div>
+    <div *ngIf="this.meUser.id == user.id" class="font-actual-user" mat-line>{{user.name}}</div>
+    <div *ngIf="this.meUser.id != user.id" class="font" mat-line>{{user.name}}</div>
     <div class="font" mat-line>{{user.score}}</div>
     <img matListAvatar class="avatar" src={{user.avatar}}>
     <mat-divider></mat-divider>

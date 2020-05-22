@@ -35,6 +35,7 @@ io.on('connection', (socket) => {
     	io.emit('removeusrs', me);
     	//remove user by id
     	users.splice(users.findIndex(item => item.id == me.id),1);
+    	usersId.splice(usersId.indexOf(me.id),1);
     }
     });
 
@@ -79,8 +80,8 @@ io.on('connection', (socket) => {
     });
     
     socket.on('clientMessageNextPlayer', (data) => {
-    	console.log('server : clientNextPlayer message : ' + data);
-    	var objectMessageAndId = {messageFromPreviousClient: data, nextPlayerId: nextPlayerToPlay()};
+    	console.log('server : clientNextPlayer message : ' + data.messageFromPreviousClient+' and actualId :'+data.actualId);
+    	var objectMessageAndId = {messageFromPreviousClient: data.messageFromPreviousClient, nextPlayerId: nextPlayerToPlay(), actualId: data.actualId};
     	io.emit('serveurMessageNextPlayer', objectMessageAndId);	
     });
 
