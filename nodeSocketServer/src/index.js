@@ -11,12 +11,14 @@ const io = socketIO(server);
 const port = process.env.PORT || 3000;
 var users = [];
 var id = 1;
+var usersId = [];
+var actualIndex;
 
 //TODO path in variable and real path
 app.use(express.static(path.join('D:/Did/socketDid/dist/socketDid')));
 
 //TODO path in variable and real path
-app.get('/', function(req,res) {
+app.get('/*', function(req,res) {
 	res.sendFile('D:/Did/socketDid/src/index.html');
 })
 
@@ -51,8 +53,10 @@ io.on('connection', (socket) => {
     	}
     	//push current user in users list
     	users.push(data);
+    	usersId.push(data.id);
     	//send newusrs event to display current user in current client
-    	io.emit('newusrs', data);	
+    	io.emit('newusrs', data);
+    	socket.emit('yourUser', data);	
     });
 
     //Listen on up undercover players from client
@@ -71,11 +75,31 @@ io.on('connection', (socket) => {
 
     socket.on('playReadyFromClient', (data) => {
     	console.log('server : playReadyFromClient');
-    	io.emit('playReadyFromServeur', "");	
+    	io.emit('playReadyFromServeur', defineFirstPlayer());	
     });
     
+    socket.on('clientMessageNextPlayer', (data) => {
+    	console.log('server : clientNextPlayer message : ' + data);
+    	var objectMessageAndId = {messageFromPreviousClient: data, nextPlayerId: nextPlayerToPlay()};
+    	io.emit('serveurMessageNextPlayer', objectMessageAndId);	
+    });
 
 });
+
+function defineFirstPlayer() {
+	actualIndex = Math.floor(Math.random() * usersId.length);
+	return usersId[actualIndex];
+}
+
+function nextPlayerToPlay() {
+	if (usersId[actualIndex] == usersId[usersId.length - 1]) {
+      actualIndex = 0;
+      return usersId[0];
+    } else {
+      actualIndex++;
+      return usersId[actualIndex];
+    }
+}
 
 server.listen(port, () => {
     console.log(`started on port: ${port}`);

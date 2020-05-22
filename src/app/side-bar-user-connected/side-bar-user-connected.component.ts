@@ -20,14 +20,35 @@ export class SideBarUserConnectedComponent implements OnInit {
       this.users = result;
     });
 
-    //TODO test
-    this.dataService.addUser(new User("Noir"));
-    this.dataService.addUser(new User("Kwenty"));
-    this.dataService.addUser(new User("Did"));
-    this.dataService.addUser(new User("Geo"));
-    this.dataService.addUser(new User("Samir"));
-    this.dataService.addUser(new User("Miky"));
-    this.dataService.addUser(new User("Vincent"));
+    //TODO TEST
+    let noir = new User("Noir");
+    noir.setId(1);
+    let kwenty = new User("Kwenty");
+    kwenty.setId(2);
+    let did = new User("Did");
+    did.setId(3);
+    let geo = new User("Geo");
+    geo.setId(4);
+    let samir = new User("Samir");
+    samir.setId(6);
+    let miky = new User("Miky");
+    miky.setId(8);
+    let vincent = new User("Vincent");
+    vincent.pushMessage('dominos');
+    vincent.pushMessage('jeux');
+    vincent.pushMessage('amusant');
+    vincent.pushMessage('en famille');
+    vincent.pushMessage('drôle');
+    vincent.setId(11);
+    this.dataService.addUser(noir);
+    this.dataService.addUser(kwenty);
+    this.dataService.addUser(did);
+    this.dataService.addUser(geo);
+    this.dataService.addUser(samir);
+    this.dataService.addUser(miky);
+    this.dataService.addUser(vincent); this.dataService.setMeUser(samir);
+    //TODO TEST
+
 
     /**
      * listen on new user connected and push in users list 
@@ -36,6 +57,12 @@ export class SideBarUserConnectedComponent implements OnInit {
       let user = data as User;
       console.log('event : newusrs for user : ', user);
       this.dataService.addUser(user);
+    })
+
+    this.webSocketService.listen('yourUser').subscribe((data) => {
+      let user = data as User;
+      console.log('event : yourUser for user : ', user);
+      this.dataService.setMeUser(user);
     })
 
     /**

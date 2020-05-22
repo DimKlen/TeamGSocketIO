@@ -7,7 +7,7 @@
   .avatar-player {
       width: 100px;
       border-radius: 30%;
-      border: 2px solid black;
+      border: 3px solid black;
   }
 
   .player-card {
@@ -33,4 +33,14 @@
   .intput-word { 
     width: 20%;
     border: 2px solid black;
+  }
+
+  .actual {
+    background-color: brown;
+    border-radius: 10%;
+  }
+
+  .message { 
+    font-size: larger;
+    font-weight: bold;
   }

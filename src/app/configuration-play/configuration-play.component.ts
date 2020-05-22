@@ -56,8 +56,9 @@ export class ConfigurationPlayComponent implements OnInit {
       this.downUc();
     });
 
-    this.webSocketService.listen('playReadyFromServeur').subscribe((data) => {
-      console.log('event : playReadyFromServeur');
+    this.webSocketService.listen('playReadyFromServeur').subscribe((id) => {
+      console.log('event : playReadyFromServeur, first id to play : ' + id);
+      this.dataService.updateIdFirstPlayer(id as number);
       this.dialogRef.close();
     });
   }

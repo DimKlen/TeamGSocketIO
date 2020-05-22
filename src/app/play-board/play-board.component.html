@@ -1,12 +1,25 @@
 <div class="flex-container">
     <div *ngFor="let user of users" class="player-card">
-        <div>
+        <div *ngIf="user.id === this.playerTurn" class="actual">
             <img matListAvatar class="avatar-player" src={{user.avatar}}>
             <mat-line class="player-name">{{user.name}}</mat-line>
+            <mat-divider></mat-divider>
+            <div *ngFor="let message of user.messages">
+                <mat-line class="message">- {{message}}</mat-line>
+            </div>
         </div>
-        <mat-divider></mat-divider>
+        <div *ngIf="user.id !== this.playerTurn">
+            <img matListAvatar class="avatar-player" src={{user.avatar}}>
+            <mat-line class="player-name">{{user.name}}</mat-line>
+            <mat-divider></mat-divider>
+            <div *ngFor="let message of user.messages">
+                <mat-line class="message">- {{message}}</mat-line>
+            </div>
+        </div>
+
     </div>
 </div>
 <div class="div-word">
-    <input type="text" id="response" class="intput-word" placeHolder="Votre mot" (keyup.enter)="submitWord()" required>
+    <input type="text" id="response" class="intput-word" placeHolder="Votre mot" [hidden]="!isYourTurn()"
+        (keyup.enter)="submitWord()" [(ngModel)]="message" required>
 </div>

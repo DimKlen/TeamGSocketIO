@@ -9,7 +9,12 @@ export class DataServiceService {
   userDataSource: BehaviorSubject<User[]> = new BehaviorSubject([]);
   userData = this.userDataSource.asObservable();
 
+  idFirstPlayerSource: BehaviorSubject<number> = new BehaviorSubject(null);
+  idFirstPlayer = this.idFirstPlayerSource.asObservable();
+
   usersLength: number = 0;
+
+  meUser: User;
 
   constructor() { }
 
@@ -24,8 +29,20 @@ export class DataServiceService {
     return this.userData;
   }
 
+  updateIdFirstPlayer(id: number) {
+    this.idFirstPlayerSource.next(id);
+  }
+
+  getIdFirstPlayer(): Observable<number> {
+    return this.idFirstPlayer;
+  }
+
   updateArrayUser(users: User[]) {
     this.userDataSource.next(Object.assign([], users));
     this.usersLength--;
+  }
+
+  setMeUser(user: User) {
+    this.meUser = user;
   }
 }
