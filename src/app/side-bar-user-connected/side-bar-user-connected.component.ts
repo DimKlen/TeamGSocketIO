@@ -22,32 +22,31 @@ export class SideBarUserConnectedComponent implements OnInit {
     });
 
     //TODO TEST
-    // let noir = new User("Noir");
-    // noir.setId(1);
-    // let kwenty = new User("Kwenty");
-    // kwenty.setId(2);
-    // let did = new User("Did");
-    // did.setId(3);
-    // let geo = new User("Geo");
-    // geo.setId(4);
-    // let samir = new User("Samir");
-    // samir.setId(6);
-    // let miky = new User("Miky");
-    // miky.setId(8);
-    // let vincent = new User("Vincent");
-    // vincent.pushMessage('dominos');
-    // vincent.pushMessage('jeux');
-    // vincent.pushMessage('amusant');
-    // vincent.pushMessage('en famille');
-    // vincent.pushMessage('drôle');
-    // vincent.setId(11);
-    // this.dataService.addUser(noir);
-    // this.dataService.addUser(kwenty);
-    // this.dataService.addUser(did);
-    // this.dataService.addUser(geo);
-    // this.dataService.addUser(samir);
-    // this.dataService.addUser(miky);
-    // this.dataService.addUser(vincent); this.dataService.setMeUser(samir);
+    /*let noir = new User("Noir");
+    noir.setId(1);
+    let kwenty = new User("Kwenty");
+    kwenty.setId(2);
+    let did = new User("Did");
+    did.setId(3);
+    let geo = new User("Geo");
+    geo.setId(4);
+    let samir = new User("Samir");
+    samir.setId(6);
+    let miky = new User("Miky");
+    miky.setId(8);
+    let vincent = new User("Vincent");
+    vincent.pushMessage('jeux');
+    vincent.pushMessage('en famille');
+    vincent.pushMessage('drôle');
+    vincent.setId(11);
+    this.dataService.addUser(noir);
+    this.dataService.addUser(kwenty);
+    this.dataService.addUser(did);
+    this.dataService.addUser(geo);
+    this.dataService.addUser(samir);
+    this.dataService.addUser(miky);
+    this.dataService.addUser(vincent); this.dataService.setMeUser(samir);
+    this.meUser = samir;*/
     //TODO TEST
 
 
@@ -67,6 +66,7 @@ export class SideBarUserConnectedComponent implements OnInit {
       this.dataService.setMeUser(user);
     })
 
+
     /**
      * listen on removed user and remove this user in users list
      */
@@ -81,12 +81,6 @@ export class SideBarUserConnectedComponent implements OnInit {
           this.dataService.usersLength--;
         }
       });
-    })
+    });
   }
-
-  // isYou(user: User): boolean {
-  //   if(this.meUser.id == user.id) {
-
-  //   }
-  // }
 }

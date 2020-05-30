@@ -30,7 +30,7 @@ export class PlayBoardComponent implements OnInit {
   constructor(public dialog: MatDialog, private dataService: DataServiceService, private webSocketService: WebSocketServiceService) { }
 
   ngOnInit(): void {
-    const dialogRef = this.dialog.open(ConfigurationPlayComponent, {
+    this.dialog.open(ConfigurationPlayComponent, {
       disableClose: true,
       width: '500px',
       height: '400px'
@@ -42,6 +42,8 @@ export class PlayBoardComponent implements OnInit {
         this.users = result;
         //TODO TEST
         // this.playerTurn = this.defineFirstPlayerId();
+        // this.dataService.updateIdFirstPlayer(this.playerTurn);
+        //
         //TODO a remettre quand serveur
         this.dataService.getIdFirstPlayer().subscribe(id => {
           this.playerTurn = id;
@@ -82,6 +84,8 @@ export class PlayBoardComponent implements OnInit {
         this.message = "";
         //TODO TEST
         // this.playerTurn = this.nextPlayerToPlay();
+        // this.dataService.updateIdFirstPlayer(this.playerTurn);
+        //
       }
     }
   }
@@ -100,29 +104,29 @@ export class PlayBoardComponent implements OnInit {
    * define who is the next player to play
    */
   //TODO TEST
-  // nextPlayerToPlay(): number {
-  //   if (this.playerTurn == this.usersId[this.usersId.length - 1]) {
-  //     this.actualIndex = 0;
-  //     return this.usersId[0];
-  //   } else {
-  //     this.actualIndex++;
-  //     return this.usersId[this.actualIndex];
-  //   }
-  // }
+  /*nextPlayerToPlay(): number {
+    if (this.playerTurn == this.usersId[this.usersId.length - 1]) {
+      this.actualIndex = 0;
+      return this.usersId[0];
+    } else {
+      this.actualIndex++;
+      return this.usersId[this.actualIndex];
+    }
+  }*/
 
   /**
    * define first player. called once, when component is called for the first time
    */
   //TODO TEST
-  // defineFirstPlayerId(): number {
-  //   //regroup all users id in list
-  //   this.users.forEach(user => {
-  //     this.usersId.push(user.id);
-  //   });
-  //   //return index 
-  //   this.actualIndex = Math.floor(Math.random() * this.usersId.length);
-  //   //return value of actualIndex (random)
-  //   return this.usersId[this.actualIndex];
-  // }
+  /* defineFirstPlayerId(): number {
+     //regroup all users id in list
+     this.users.forEach(user => {
+       this.usersId.push(user.id);
+     });
+     //return index 
+     this.actualIndex = Math.floor(Math.random() * this.usersId.length);
+     //return value of actualIndex (random)
+     return this.usersId[this.actualIndex];
+   }*/
 
 }

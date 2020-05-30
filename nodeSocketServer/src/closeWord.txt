@@ -1,0 +1,3 @@
+Samsung,Apple,Huawei,Nokia
+Xbox,Playstation,Wii
+Ketchup,Mayonnaise,Moutarde

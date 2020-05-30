@@ -94,7 +94,7 @@ export class ConfigurationPlayComponent implements OnInit {
   play() {
     if (this.isFullCount()) {
       //TODO test
-      this.dialogRef.close();
+      // this.dialogRef.close();
       this.webSocketService.emit("playReadyFromClient", "");
     }
   }

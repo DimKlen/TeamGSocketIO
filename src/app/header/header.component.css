@@ -1,0 +1,21 @@
+.app-layout-header {
+    display: grid;
+    grid-template-columns: 1fr 4fr 6fr 1fr;
+    grid-template-rows: auto;
+  }
+
+  .div-buttons {
+    grid-column: 1;
+  }
+
+  .div-notif {
+    grid-column: 2;
+    font-size: xx-large;
+    font-weight: bold;
+  }
+
+  .div-secret-word {
+    grid-column: 3;
+    font-size: xx-large;
+    font-weight: bold;
+  }

@@ -8,8 +8,11 @@ const server = http.Server(app);
 const socketIO = require('socket.io');
 const io = socketIO(server);
 
+const fs = require('fs');
+
 const port = process.env.PORT || 3000;
 var users = [];
+var sockets = new Map();
 var id = 1;
 var usersId = [];
 var actualIndex;
@@ -18,25 +21,30 @@ var actualIndex;
 app.use(express.static(path.join('D:/Did/socketDid/dist/socketDid')));
 
 //TODO path in variable and real path
-app.get('/*', function(req,res) {
+/*app.get('/', function(req,res) {
 	res.sendFile('D:/Did/socketDid/src/index.html');
-})
+})*/
 
 //Listen on each connection on app
 io.on('connection', (socket) => {
 	//current user
 	var me = null;
-    console.log('user connected to socket');
+
+    console.log('user connected to socket. New socket id : '+socket.id);
+
+    sockets.set(socket.id,socket);
     //Listen disconnection for each user connected
     socket.on('disconnect',() => {
-    	console.log('user disconnected to socket is : '+JSON.stringify(me));
+    	console.log('user disconnected to socket. Removing socket Id : '+socket.id);
     	//if current user is already loged
     	if(me != null) {
-    	io.emit('removeusrs', me);
-    	//remove user by id
-    	users.splice(users.findIndex(item => item.id == me.id),1);
-    	usersId.splice(usersId.indexOf(me.id),1);
-    }
+	    	io.emit('removeusrs', me);
+	    	//remove user by id
+	    	users.splice(users.findIndex(item => item.id == me.id),1);
+	    	usersId.splice(usersId.indexOf(me.id),1);
+    	}
+    	sockets.delete(socket.id);
+		
     });
 
     //Listen on user loged step
@@ -76,16 +84,55 @@ io.on('connection', (socket) => {
 
     socket.on('playReadyFromClient', (data) => {
     	console.log('server : playReadyFromClient');
-    	io.emit('playReadyFromServeur', defineFirstPlayer());	
+    	io.emit('playReadyFromServeur', defineFirstPlayer());
+    	var wordsToPlay = define2Words(chooseWordsFromList());
+    	var indexUcUserSocket = defineUcUserSocket();
+    	console.log("user uc is : "+indexUcUserSocket)
+    	for(let [k,v] of sockets) {
+    		if(k == indexUcUserSocket) {
+    			v.emit('secretWord', wordsToPlay[1]);
+    			console.log("socket :"+k+ "has word "+wordsToPlay[1])
+    		}else {
+    			v.emit('secretWord', wordsToPlay[0]);
+    			console.log("socket :"+k+ "has word "+wordsToPlay[0])
+    		}
+    		
+	    	
+    	}
     });
     
     socket.on('clientMessageNextPlayer', (data) => {
     	console.log('server : clientNextPlayer message : ' + data.messageFromPreviousClient+' and actualId :'+data.actualId);
     	var objectMessageAndId = {messageFromPreviousClient: data.messageFromPreviousClient, nextPlayerId: nextPlayerToPlay(), actualId: data.actualId};
-    	io.emit('serveurMessageNextPlayer', objectMessageAndId);	
+    	io.emit('serveurMessageNextPlayer', objectMessageAndId);
+    	
     });
 
 });
+
+function define2Words(words) {
+	var wordsToPlay = [];
+	var indexWordCivil = Math.floor(Math.random() * words.length);
+	var indexWordUc = Math.floor(Math.random() * words.length);
+
+	/*if(indexWordUc == indexWordCivil) {
+		console.log("recall");
+		define2Words(words);
+	}else {*/
+		wordsToPlay.push(words[indexWordCivil])
+		console.log("indexWordCivil : "+indexWordCivil+" associated word : "+words[indexWordCivil])
+		wordsToPlay.push(words[indexWordUc])
+		console.log("indexWordUc : "+indexWordUc+" associated word : "+words[indexWordUc])
+	//}
+	console.log("wordsToPlay : "+wordsToPlay);
+	return wordsToPlay;
+
+}
+
+function defineUcUserSocket() {
+	let items = Array.from(sockets.keys());
+	return items[Math.floor(Math.random() * items.length)];
+}
 
 function defineFirstPlayer() {
 	actualIndex = Math.floor(Math.random() * usersId.length);
@@ -100,6 +147,24 @@ function nextPlayerToPlay() {
       actualIndex++;
       return usersId[actualIndex];
     }
+}
+
+function readCloseWordFile() {
+	var elem = [];
+	var data = fs.readFileSync('D:/Did/socketDid/nodeSocketServer/src/closeWord.txt');
+	var array = data.toString().split("\n");
+	var comptIndex =0;
+	for(i in array) {
+        elem[comptIndex] = array[i].toString().split(",");
+        comptIndex++;
+	}
+	return elem;
+}
+
+function chooseWordsFromList() {
+	var arrayWord2Dim = readCloseWordFile();
+	var randInt = Math.floor(Math.random() * arrayWord2Dim.length);
+    return arrayWord2Dim[randInt];
 }
 
 server.listen(port, () => {
