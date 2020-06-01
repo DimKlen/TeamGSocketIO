@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { ConfigurationPlayComponent } from '../configuration-play/configuration-play.component';
 import { DataServiceService } from '../data-service.service';
 
 @Component({
@@ -10,10 +8,13 @@ import { DataServiceService } from '../data-service.service';
 })
 export class MainContentComponent implements OnInit {
 
-  constructor() {
+  //TODO TEST
+  constructor(/*private dataService: DataServiceService*/) {
   }
 
   ngOnInit(): void {
+    //TODO TEST
+    //this.dataService.updateEndTurn(true);
   }
 
 }

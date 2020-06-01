@@ -10,25 +10,32 @@ import { WebSocketServiceService } from '../web-socket-service.service';
 })
 export class HeaderComponent implements OnInit {
 
-  notifPlayerTurn: string;
+  notif: string;
 
   motSecret: string;
 
   constructor(private dataService: DataServiceService, private webSocketService: WebSocketServiceService) { }
   ngOnInit(): void {
 
-    // this.motSecret = "Samsung";
-    this.dataService.getIdFirstPlayer().subscribe(id => {
-      this.dataService.getArrayUser().subscribe(result => {
-        //get users list from service (from side bar connected users)
-        let users = result as User[];
-        users.forEach(user => {
-          if (user.id == id) {
-            this.notifPlayerTurn = "C'est à " + user.name + " de décrire son mot.";
-          }
+    this.motSecret = "Samsung";
+    this.dataService.isEndTurn().subscribe(endTurn => {
+      if (endTurn) {
+        this.notif = "Cliquer sur un joueur pour voter contre lui.";
+        console.log(this.notif);
+      } else {
+        this.dataService.getIdFirstPlayer().subscribe(id => {
+          this.dataService.getArrayUser().subscribe(result => {
+            //get users list from service (from side bar connected users)
+            let users = result as User[];
+            users.forEach(user => {
+              if (user.id == id) {
+                this.notif = "C'est à " + user.name + " de décrire son mot.";
+              }
+            });
+          });
         });
-      });
-    });
+      }
+    })
 
     this.webSocketService.listen('secretWord').subscribe((secretWord) => {
       console.log('event : secretWord, word : ' + secretWord);

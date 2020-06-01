@@ -1,15 +1,13 @@
 <div class="app-layout-header">
-    <div class="div-buttons">
-        <button [hidden]="!isAdmin()">nouvel squad</button>
-        <button [hidden]="!isAdmin()">reset</button>
-    </div>
     <div class="div-notif">
-        {{notifPlayerTurn}}
+        {{notif}}
     </div>
     <div class="div-secret-word">
         Ton mot secret est : {{motSecret}}
     </div>
     <div>
         <button>aide</button>
+        <button [hidden]="!isAdmin()">nouvel squad</button>
+        <button [hidden]="!isAdmin()">reset</button>
     </div>
 </div>

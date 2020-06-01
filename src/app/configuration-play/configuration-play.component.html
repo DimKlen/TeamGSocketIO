@@ -1,22 +1,27 @@
 <div class="dialog-layout">
   <div class="dialog-title">
     <h2 mat-dialog-title>Nombre de joueurs : {{nombreJoueurs}}
-      <p *ngIf="nombreJoueurs <= 2">(3 joueurs minimum)</p>
     </h2>
   </div>
   <div class="dialog-civil">
-    <label mat-label>{{nombreCivil}} Civils</label>
+    <label mat-label>{{nombreCivil}} Complices / {{nombreUc}} Escroc</label>
   </div>
   <div class="dialog-uc">
-    <button mat-mini-fab class="more-uc" [disabled]="!isModifiable()" (click)="pushButtonUpUc()">+</button>
-    <label mat-label style="padding: 2em;">{{nombreUc}} Undercovers</label>
-    <button mat-mini-fab class="less-uc" [disabled]="!isModifiable()" (click)="pushButtonDownUc()">-</button>
+    <label mat-label style="padding: 2em;">Nombre de tours </label>
+    <button mat-mini-fab class="more-uc" [disabled]="!isModifiable()" (click)="pushButtonUpInning()">+</button>
+    <label mat-label style="padding: 2em;">{{tours}}</label>
+    <button mat-mini-fab class="less-uc" [disabled]="!isModifiable()" (click)="pushButtonDownInning()">-</button>
   </div>
-  <div class="dialog-white">
+  <!--<div class="dialog-uc">
+    <button mat-mini-fab class="more-uc" [disabled]="!isModifiable()" (click)="pushButtonUpUc()">+</button>
+    <label mat-label style="padding: 2em;">{{nombreUc}} Escroc</label>
+    <button mat-mini-fab class="less-uc" [disabled]="!isModifiable()" (click)="pushButtonDownUc()">-</button>
+  </div>-->
+  <!--<div class="dialog-white">
     <button mat-mini-fab disabled class="more-white">+</button>
     <label mat-label disabled style="padding: 2em;">{{nombreWhite}} Mr. White</label>
     <button mat-mini-fab class="less-white" disabled>-</button>
-  </div>
+  </div>-->
   <div class="dialog-ok">
     <button mat-raised-button color="primary" [disabled]="!isPlayable()" (click)="play()">Ok</button>
   </div>

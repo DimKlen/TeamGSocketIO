@@ -1,6 +1,6 @@
 <div class="flex-container">
     <div *ngFor="let user of users" class="player-card">
-        <div *ngIf="user.id === this.playerTurn" class="actual">
+        <div *ngIf="user.id === this.playerTurn && !endTurn" class="actual">
             <img matListAvatar class="avatar-player" src={{user.avatar}}>
             <mat-line class="player-name">{{user.name}}</mat-line>
             <mat-divider></mat-divider>
@@ -8,7 +8,8 @@
                 <mat-line class="message">- {{message}}</mat-line>
             </div>
         </div>
-        <div *ngIf="user.id !== this.playerTurn">
+        <div *ngIf="voted != user.id  && (user.id !== this.playerTurn || endTurn)" style="cursor: pointer"
+            (click)="submitVote(user)">
             <img matListAvatar class="avatar-player" src={{user.avatar}}>
             <mat-line class="player-name">{{user.name}}</mat-line>
             <mat-divider></mat-divider>
@@ -16,10 +17,17 @@
                 <mat-line class="message">- {{message}}</mat-line>
             </div>
         </div>
-
+        <div *ngIf="user.id == voted" class="selected">
+            <img matListAvatar class="avatar-player" src={{user.avatar}}>
+            <mat-line class="player-name">{{user.name}}</mat-line>
+            <mat-divider></mat-divider>
+            <div *ngFor="let message of user.messages">
+                <mat-line class="message">- {{message}}</mat-line>
+            </div>
+        </div>
     </div>
 </div>
 <div class="div-word">
-    <input type="text" id="response" class="intput-word" placeHolder="Votre mot" [hidden]="!isYourTurn()"
+    <input type="text" id="response" class="intput-word" placeHolder="Votre mot" [hidden]="!isYourTurn() || endTurn"
         (keyup.enter)="submitWord()" [(ngModel)]="message" required maxlength="30">
 </div>

@@ -14,6 +14,9 @@ export class DataServiceService {
 
   usersLength: number = 0;
 
+  endTurnSource: BehaviorSubject<boolean> = new BehaviorSubject(null);
+  endTurn = this.endTurnSource.asObservable();
+
   meUser: User;
 
   constructor() { }
@@ -27,6 +30,14 @@ export class DataServiceService {
 
   getArrayUser(): Observable<User[]> {
     return this.userData;
+  }
+
+  updateEndTurn(endTurn: boolean) {
+    this.endTurnSource.next(endTurn);
+  }
+
+  isEndTurn(): Observable<boolean> {
+    return this.endTurn;
   }
 
   updateIdFirstPlayer(id: number) {

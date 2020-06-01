@@ -5,6 +5,7 @@ import { DataServiceService } from '../data-service.service';
 import { User } from '../models/User';
 import { WebSocketServiceService } from '../web-socket-service.service';
 import { MessageId } from '../models/MessageId';
+import { Vote } from '../models/Vote';
 
 @Component({
   selector: 'app-play-board',
@@ -24,25 +25,32 @@ export class PlayBoardComponent implements OnInit {
   message: string;
   //player id actual
   playerTurn: number;
+
+  endTurn: boolean = false;
   //TODO TEST
-  // actualIndex: number;
+  //actualIndex: number;
+
+  voted: number;
 
   constructor(public dialog: MatDialog, private dataService: DataServiceService, private webSocketService: WebSocketServiceService) { }
 
   ngOnInit(): void {
     this.dialog.open(ConfigurationPlayComponent, {
       disableClose: true,
-      width: '500px',
-      height: '400px'
+      width: '400px',
+      height: '300px'
     });
+
 
     this.dialog.afterAllClosed.subscribe(() => {
       this.dataService.getArrayUser().subscribe(result => {
+        //TODO TEST
+        //this.endTurn = true;
         //get users list from service (from side bar connected users)
         this.users = result;
         //TODO TEST
-        // this.playerTurn = this.defineFirstPlayerId();
-        // this.dataService.updateIdFirstPlayer(this.playerTurn);
+        /*this.playerTurn = this.defineFirstPlayerId();
+        this.dataService.updateIdFirstPlayer(this.playerTurn);*/
         //
         //TODO a remettre quand serveur
         this.dataService.getIdFirstPlayer().subscribe(id => {
@@ -70,6 +78,24 @@ export class PlayBoardComponent implements OnInit {
       this.dataService.updateIdFirstPlayer(messageId.nextPlayerId as number);
     })
 
+    this.webSocketService.listen('endTurn').subscribe((data) => {
+      this.dataService.updateEndTurn(true);
+      this.dataService.isEndTurn().subscribe(endTurn => {
+        this.endTurn = endTurn;
+        console.log("end turn");
+      })
+    });
+
+  }
+
+  submitVote(event) {
+    let user = event as User;
+    if (user.id != this.dataService.meUser.id && this.voted != user.id) {
+      this.voted = user.id;
+      let vote = new Vote(this.dataService.meUser.id, this.voted);
+      this.webSocketService.emit("userJustVoted", vote)
+      console.log("voted on : " + this.voted)
+    }
   }
 
   submitWord() {
@@ -83,8 +109,8 @@ export class PlayBoardComponent implements OnInit {
         //clear input
         this.message = "";
         //TODO TEST
-        // this.playerTurn = this.nextPlayerToPlay();
-        // this.dataService.updateIdFirstPlayer(this.playerTurn);
+        /*this.playerTurn = this.nextPlayerToPlay();
+        this.dataService.updateIdFirstPlayer(this.playerTurn);*/
         //
       }
     }
@@ -118,15 +144,15 @@ export class PlayBoardComponent implements OnInit {
    * define first player. called once, when component is called for the first time
    */
   //TODO TEST
-  /* defineFirstPlayerId(): number {
-     //regroup all users id in list
-     this.users.forEach(user => {
-       this.usersId.push(user.id);
-     });
-     //return index 
-     this.actualIndex = Math.floor(Math.random() * this.usersId.length);
-     //return value of actualIndex (random)
-     return this.usersId[this.actualIndex];
-   }*/
+  /*defineFirstPlayerId(): number {
+    //regroup all users id in list
+    this.users.forEach(user => {
+      this.usersId.push(user.id);
+    });
+    //return index 
+    this.actualIndex = Math.floor(Math.random() * this.usersId.length);
+    //return value of actualIndex (random)
+    return this.usersId[this.actualIndex];
+  }*/
 
 }

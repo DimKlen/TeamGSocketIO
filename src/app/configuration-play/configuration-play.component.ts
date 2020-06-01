@@ -13,7 +13,8 @@ export class ConfigurationPlayComponent implements OnInit {
   nombreJoueurs: number;
   nombreCivil: number = 0;
   nombreUc: number = 0;
-  nombreWhite: number = 0;
+  tours: number = 1;
+  //nombreWhite: number = 0;
   constructor(private dataService: DataServiceService, private webSocketService: WebSocketServiceService
     , private dialogRef: MatDialogRef<ConfigurationPlayComponent>) { }
 
@@ -30,31 +31,31 @@ export class ConfigurationPlayComponent implements OnInit {
           this.initRoles(3, 1, 0)
           break;
         case 5:
-          this.initRoles(3, 2, 0)
+          this.initRoles(4, 1, 0)
           break;
         case 6:
-          this.initRoles(4, 2, 0)
+          this.initRoles(5, 1, 0)
           break;
         case 7:
-          this.initRoles(5, 2, 0)
+          this.initRoles(6, 1, 0)
           break;
         case 8:
-          this.initRoles(5, 3, 0)
+          this.initRoles(7, 1, 0)
           break;
         default:
           break;
       }
     });
 
-    this.webSocketService.listen('upUcFromServeur').subscribe((data) => {
+    /*this.webSocketService.listen('upUcFromServeur').subscribe((data) => {
       console.log('event : upUcFromServeur');
       this.upUc();
-    });
+    });*/
 
-    this.webSocketService.listen('downUcFromServeur').subscribe((data) => {
+    /*this.webSocketService.listen('downUcFromServeur').subscribe((data) => {
       console.log('event : downUcFromServeur');
       this.downUc();
-    });
+    });*/
 
     this.webSocketService.listen('playReadyFromServeur').subscribe((id) => {
       console.log('event : playReadyFromServeur, first id to play : ' + id);
@@ -81,7 +82,7 @@ export class ConfigurationPlayComponent implements OnInit {
    * Buttons are modifiable if number of players is 5 or greater
    */
   isModifiable(): boolean {
-    if (this.nombreJoueurs >= 5) {
+    if (this.nombreJoueurs >= 3) {
       return true;
     } else {
       return false;
@@ -94,8 +95,8 @@ export class ConfigurationPlayComponent implements OnInit {
   play() {
     if (this.isFullCount()) {
       //TODO test
-      // this.dialogRef.close();
-      this.webSocketService.emit("playReadyFromClient", "");
+      //this.dialogRef.close();
+      this.webSocketService.emit("playReadyFromClient", this.tours);
     }
   }
 
@@ -109,33 +110,33 @@ export class ConfigurationPlayComponent implements OnInit {
   initRoles(civil: number, uc: number, white: number) {
     this.nombreCivil = civil;
     this.nombreUc = uc;
-    this.nombreWhite = white;
+    //this.nombreWhite = white;
   }
 
   /**
    * Check if is full count
    */
   isFullCount(): boolean {
-    let fullCount = this.nombreUc + this.nombreCivil + this.nombreWhite;
+    let fullCount = this.nombreUc + this.nombreCivil /*+ this.nombreWhite*/;
     if (fullCount == this.nombreJoueurs) {
       return true;
     } else { return false }
   }
 
-  upUc() {
+  /*upUc() {
     this.nombreCivil--;
     this.nombreUc++;
-  }
+  }*/
 
-  downUc() {
+  /*downUc() {
     this.nombreCivil++;
     this.nombreUc--;
-  }
+  }*/
 
   /**
    * Up count of uc players
    */
-  pushButtonUpUc() {
+  /*pushButtonUpUc() {
     switch (this.nombreJoueurs) {
       case 5:
       case 6:
@@ -156,12 +157,24 @@ export class ConfigurationPlayComponent implements OnInit {
         }
         break;
     }
+  }*/
+
+  pushButtonUpInning() {
+    if (this.tours < 5) {
+      this.tours++;
+    }
+  }
+
+  pushButtonDownInning() {
+    if (this.tours > 1) {
+      this.tours--;
+    }
   }
 
   /**
    * Down count of uc players
    */
-  pushButtonDownUc() {
+  /*pushButtonDownUc() {
     switch (this.nombreJoueurs) {
       case 5:
       case 6:
@@ -182,5 +195,5 @@ export class ConfigurationPlayComponent implements OnInit {
         }
         break;
     }
-  }
+  }*/
 }

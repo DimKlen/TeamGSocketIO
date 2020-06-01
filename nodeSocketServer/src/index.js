@@ -11,11 +11,16 @@ const io = socketIO(server);
 const fs = require('fs');
 
 const port = process.env.PORT || 3000;
+
 var users = [];
+var usersId = [];
 var sockets = new Map();
 var id = 1;
-var usersId = [];
 var actualIndex;
+
+var nombreTours;
+var comptNombreTours = 1;
+var firstPlayer;
 
 //TODO path in variable and real path
 app.use(express.static(path.join('D:/Did/socketDid/dist/socketDid')));
@@ -83,29 +88,36 @@ io.on('connection', (socket) => {
     });
 
     socket.on('playReadyFromClient', (data) => {
+    	nombreTours = data;
+    	console.log("turns number : "+nombreTours);
     	console.log('server : playReadyFromClient');
-    	io.emit('playReadyFromServeur', defineFirstPlayer());
+    	firstPlayer = defineFirstPlayer();
+    	io.emit('playReadyFromServeur', firstPlayer);
     	var wordsToPlay = define2Words(chooseWordsFromList());
     	var indexUcUserSocket = defineUcUserSocket();
     	console.log("user uc is : "+indexUcUserSocket)
     	for(let [k,v] of sockets) {
     		if(k == indexUcUserSocket) {
     			v.emit('secretWord', wordsToPlay[1]);
-    			console.log("socket :"+k+ "has word "+wordsToPlay[1])
     		}else {
     			v.emit('secretWord', wordsToPlay[0]);
-    			console.log("socket :"+k+ "has word "+wordsToPlay[0])
     		}
-    		
-	    	
     	}
     });
     
     socket.on('clientMessageNextPlayer', (data) => {
     	console.log('server : clientNextPlayer message : ' + data.messageFromPreviousClient+' and actualId :'+data.actualId);
-    	var objectMessageAndId = {messageFromPreviousClient: data.messageFromPreviousClient, nextPlayerId: nextPlayerToPlay(), actualId: data.actualId};
-    	io.emit('serveurMessageNextPlayer', objectMessageAndId);
-    	
+    	var idNextToPlay = nextPlayerToPlay();
+    	var objectMessageAndId = {messageFromPreviousClient: data.messageFromPreviousClient, nextPlayerId: idNextToPlay, actualId: data.actualId};
+	    	io.emit('serveurMessageNextPlayer', objectMessageAndId);
+    	if(idNextToPlay == firstPlayer) {
+    		if(comptNombreTours == nombreTours) {
+    			io.emit('endTurn', "");
+    			comptNombreTours = 1;
+    		}else {
+    			comptNombreTours++;
+    		}
+    	}	    	
     });
 
 });
@@ -115,15 +127,16 @@ function define2Words(words) {
 	var indexWordCivil = Math.floor(Math.random() * words.length);
 	var indexWordUc = Math.floor(Math.random() * words.length);
 
-	/*if(indexWordUc == indexWordCivil) {
-		console.log("recall");
-		define2Words(words);
-	}else {*/
+	if(indexWordUc == indexWordCivil) {
+		if(indexWordUc == words.length) {
+			indexWordUc--;
+		}else {
+			indexWordUc++;
+		}
+	}else {
 		wordsToPlay.push(words[indexWordCivil])
-		console.log("indexWordCivil : "+indexWordCivil+" associated word : "+words[indexWordCivil])
 		wordsToPlay.push(words[indexWordUc])
-		console.log("indexWordUc : "+indexWordUc+" associated word : "+words[indexWordUc])
-	//}
+	}
 	console.log("wordsToPlay : "+wordsToPlay);
 	return wordsToPlay;
 

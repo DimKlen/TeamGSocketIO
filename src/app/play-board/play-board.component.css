@@ -10,6 +10,13 @@
       border: 3px solid black;
   }
 
+  .avatar-player-clickable {
+    width: 100px;
+    border-radius: 30%;
+    border: 3px solid black;
+    cursor: pointer;
+}
+
   .player-card {
       border: 2px solid black;
       border-radius: 10%;
@@ -37,6 +44,11 @@
 
   .actual {
     background-color: brown;
+    border-radius: 10%;
+  }
+
+  .selected {
+    background-color: green;
     border-radius: 10%;
   }
 
