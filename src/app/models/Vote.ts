@@ -1,16 +1,22 @@
 export class Vote {
-    userIdJustVoted: number;
-    userIdToVote: number;
+    oldSelectPlayerId: number
+    playerIdWhoSelected: number;
+    actualSelectPlayerId: number;
 
-    constructor(me: number, him: number) {
-        this.userIdJustVoted = me;
-        this.userIdToVote = him;
+    constructor(old: number, me: number, him: number) {
+        this.oldSelectPlayerId = old
+        this.playerIdWhoSelected = me;
+        this.actualSelectPlayerId = him;
     }
 
-    setUserIdJustVoted(id: number) {
-        this.userIdJustVoted = id;
+    setPlayerIdWhoSelected(id: number) {
+        this.playerIdWhoSelected = id;
     }
-    setUserIdToVote(id: number) {
-        this.userIdToVote = id;
+    setActualSelectPlayerId(id: number) {
+        this.actualSelectPlayerId = id;
+    }
+
+    setOldSelectPlayerId(id: number) {
+        this.oldSelectPlayerId = id;
     }
 }

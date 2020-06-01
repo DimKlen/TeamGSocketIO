@@ -30,7 +30,7 @@ export class PlayBoardComponent implements OnInit {
   //TODO TEST
   //actualIndex: number;
 
-  voted: number;
+  selectPlayer: number;
 
   constructor(public dialog: MatDialog, private dataService: DataServiceService, private webSocketService: WebSocketServiceService) { }
 
@@ -39,6 +39,11 @@ export class PlayBoardComponent implements OnInit {
       disableClose: true,
       width: '400px',
       height: '300px'
+    });
+    //TODO TEST
+    //this.dataService.updateEndTurn(true);
+    this.dataService.isEndTurn().subscribe(endTurn => {
+      this.endTurn = endTurn;
     });
 
 
@@ -49,8 +54,8 @@ export class PlayBoardComponent implements OnInit {
         //get users list from service (from side bar connected users)
         this.users = result;
         //TODO TEST
-        /*this.playerTurn = this.defineFirstPlayerId();
-        this.dataService.updateIdFirstPlayer(this.playerTurn);*/
+        //this.playerTurn = this.defineFirstPlayerId();
+        //this.dataService.updateIdFirstPlayer(this.playerTurn);
         //
         //TODO a remettre quand serveur
         this.dataService.getIdFirstPlayer().subscribe(id => {
@@ -71,7 +76,6 @@ export class PlayBoardComponent implements OnInit {
           user.messages.push(messageId.messageFromPreviousClient);
           //keep in persistence message of all clients
           this.listMessages.push(messageId.messageFromPreviousClient.toUpperCase());
-          // user.pushMessage(messageId.messageFromPreviousClient);
           console.log('On user : ' + user + ' message : ' + messageId.messageFromPreviousClient);
         }
       })
@@ -86,16 +90,45 @@ export class PlayBoardComponent implements OnInit {
       })
     });
 
+    this.webSocketService.listen('userVoted').subscribe((data) => {
+      let voted = data as Vote;
+      console.log("who : " + voted.playerIdWhoSelected + " to : " + voted.actualSelectPlayerId);
+      this.searchPlayerByIdAndremoveAVote(voted.oldSelectPlayerId);
+      this.searchPlayerByIdAndAddVote(voted.actualSelectPlayerId);
+    });
   }
 
   submitVote(event) {
     let user = event as User;
-    if (user.id != this.dataService.meUser.id && this.voted != user.id) {
-      this.voted = user.id;
-      let vote = new Vote(this.dataService.meUser.id, this.voted);
+    if (user.id != this.dataService.meUser.id && this.selectPlayer != user.id) {
+      let vote = new Vote(this.selectPlayer, this.dataService.meUser.id, user.id);
+      //TODO TEST
+      //this.searchPlayerByIdAndremoveAVote(this.selectPlayer);
+      this.selectPlayer = user.id;
+      //TODO TEST
+      //this.searchPlayerByIdAndAddVote(this.selectPlayer);
       this.webSocketService.emit("userJustVoted", vote)
-      console.log("voted on : " + this.voted)
+      console.log("voted on : " + this.selectPlayer)
     }
+  }
+
+  searchPlayerByIdAndAddVote(id: number) {
+    this.users.forEach(user => {
+      if (user.id == id) {
+        user.votes++;
+        console.log("user : " + user.name + " votes : " + user.votes);
+      }
+    });
+  }
+
+  searchPlayerByIdAndremoveAVote(id: number) {
+    this.users.forEach(user => {
+      if (user.id == id) {
+        if (user.votes != 0) {
+          user.votes--;
+        };
+      }
+    });
   }
 
   submitWord() {

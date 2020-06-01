@@ -8,18 +8,24 @@
                 <mat-line class="message">- {{message}}</mat-line>
             </div>
         </div>
-        <div *ngIf="voted != user.id  && (user.id !== this.playerTurn || endTurn)" style="cursor: pointer"
+        <div *ngIf="selectPlayer != user.id  && (user.id !== this.playerTurn || endTurn)" style="cursor: pointer"
             (click)="submitVote(user)">
-            <img matListAvatar class="avatar-player" src={{user.avatar}}>
-            <mat-line class="player-name">{{user.name}}</mat-line>
+            <div class="div-info">
+                <img matListAvatar class="avatar-player" src={{user.avatar}}>
+                <mat-line class="player-name">{{user.name}}</mat-line>
+                <mat-line class="votes" [hidden]="!endTurn">{{user.votes}}</mat-line>
+            </div>
             <mat-divider></mat-divider>
             <div *ngFor="let message of user.messages">
                 <mat-line class="message">- {{message}}</mat-line>
             </div>
         </div>
-        <div *ngIf="user.id == voted" class="selected">
-            <img matListAvatar class="avatar-player" src={{user.avatar}}>
-            <mat-line class="player-name">{{user.name}}</mat-line>
+        <div *ngIf="user.id == selectPlayer" class="selected">
+            <div class="div-info">
+                <img matListAvatar class="avatar-player" src={{user.avatar}}>
+                <mat-line class="player-name">{{user.name}}</mat-line>
+                <mat-line class="votes" [hidden]="!endTurn">{{user.votes}}</mat-line>
+            </div>
             <mat-divider></mat-divider>
             <div *ngFor="let message of user.messages">
                 <mat-line class="message">- {{message}}</mat-line>

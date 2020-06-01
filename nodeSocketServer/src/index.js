@@ -120,6 +120,12 @@ io.on('connection', (socket) => {
     	}	    	
     });
 
+    socket.on('userJustVoted', (data) => {
+    	console.log('server : userJustVoted user just voted : ' + data.userIdToVote+' and to vote :'+data.userIdToVote);
+    	//var vote = {userIdJustVoted: data.userIdJustVoted, userIdToVote: data.userIdToVote};
+    	io.emit('userVoted', data);	    	
+	});
+
 });
 
 function define2Words(words) {

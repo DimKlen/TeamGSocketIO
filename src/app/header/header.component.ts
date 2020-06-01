@@ -17,7 +17,8 @@ export class HeaderComponent implements OnInit {
   constructor(private dataService: DataServiceService, private webSocketService: WebSocketServiceService) { }
   ngOnInit(): void {
 
-    this.motSecret = "Samsung";
+    //TODO TEST
+    //this.motSecret = "Samsung";
     this.dataService.isEndTurn().subscribe(endTurn => {
       if (endTurn) {
         this.notif = "Cliquer sur un joueur pour voter contre lui.";

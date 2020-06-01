@@ -5,13 +5,13 @@
   }
 
   .avatar-player {
-      width: 100px;
+      width: 70px;
       border-radius: 30%;
       border: 3px solid black;
   }
 
   .avatar-player-clickable {
-    width: 100px;
+    width: 70px;
     border-radius: 30%;
     border: 3px solid black;
     cursor: pointer;
@@ -26,10 +26,22 @@
       padding: 15px;
   }
 
+  .div-info {
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr ;
+  }
+
+  .votes {
+    align-self: center;
+    justify-self: center;
+    font-weight: bold;
+  }
+
   .player-name {
     font-size: 30px;
     font-weight: bold;
     padding-left: 1em;
+    align-self: center;
   }
 
   .div-word { 
