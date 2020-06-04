@@ -6,6 +6,7 @@ import { User } from '../models/User';
 import { WebSocketServiceService } from '../web-socket-service.service';
 import { MessageId } from '../models/MessageId';
 import { Vote } from '../models/Vote';
+import { RecapVoteStepComponent } from '../recap-vote-step/recap-vote-step.component';
 
 @Component({
   selector: 'app-play-board',
@@ -95,6 +96,13 @@ export class PlayBoardComponent implements OnInit {
       console.log("who : " + voted.playerIdWhoSelected + " to : " + voted.actualSelectPlayerId);
       this.searchPlayerByIdAndremoveAVote(voted.oldSelectPlayerId);
       this.searchPlayerByIdAndAddVote(voted.actualSelectPlayerId);
+    });
+
+    this.webSocketService.listen('endVoteStep').subscribe((data) => {
+      this.dialog.open(RecapVoteStepComponent, {
+        width: '500px',
+        height: '200px'
+      });
     });
   }
 

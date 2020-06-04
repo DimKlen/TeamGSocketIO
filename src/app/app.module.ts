@@ -17,6 +17,7 @@ import { FooterComponent } from './footer/footer.component';
 import { WebSocketServiceService } from '../app/web-socket-service.service';
 import { ConfigurationPlayComponent } from './configuration-play/configuration-play.component';
 import { DataServiceService } from '../app/data-service.service';
+import { RecapVoteStepComponent } from './recap-vote-step/recap-vote-step.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { DataServiceService } from '../app/data-service.service';
     HeaderComponent,
     PlayBoardComponent,
     FooterComponent,
-    ConfigurationPlayComponent
+    ConfigurationPlayComponent,
+    RecapVoteStepComponent
   ],
   imports: [
     BrowserModule,
