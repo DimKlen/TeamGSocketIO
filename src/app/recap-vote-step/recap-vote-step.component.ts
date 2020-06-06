@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { User } from '../models/User';
 
 @Component({
   selector: 'app-recap-vote-step',
@@ -7,9 +9,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class RecapVoteStepComponent implements OnInit {
 
-  constructor() { }
+  userEliminated: User
+
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
+    this.userEliminated = data.userKicked;
+  }
 
   ngOnInit(): void {
+    console.log(this.userEliminated)
   }
 
 }

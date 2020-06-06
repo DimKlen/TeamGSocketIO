@@ -99,9 +99,12 @@ export class PlayBoardComponent implements OnInit {
     });
 
     this.webSocketService.listen('endVoteStep').subscribe((data) => {
+      let user = data as User;
+      console.log("user : " + user.name + " has been removed")
       this.dialog.open(RecapVoteStepComponent, {
         width: '500px',
-        height: '200px'
+        height: '200px',
+        data: { userKicked: data }
       });
     });
   }

@@ -5,6 +5,8 @@ export class User {
     score: number = 0;
     messages: string[] = [];
     votes: number = 0;
+    secretWord: string;
+    role: string;
 
     constructor(name: string) {
         this.name = name;

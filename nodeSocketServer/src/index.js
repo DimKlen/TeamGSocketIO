@@ -12,10 +12,17 @@ const fs = require('fs');
 
 const port = process.env.PORT || 3000;
 
+// list of user object
 var users = [];
+//list of users id
 var usersId = [];
+//socket id -> socket object
 var sockets = new Map();
+//user -> socket
+var usersSocketsId = new Map();
+//key : user id current -> user id selected
 var usersVoted = new Map();
+//count id 
 var id = 1;
 var actualIndex;
 
@@ -59,7 +66,8 @@ io.on('connection', (socket) => {
 		data.id = id;
 		id++;
 		console.log('user just loged : ' + JSON.stringify(data));
-
+		//persist user to socket
+		usersSocketsId.set(data, socket.id);
 		//set variable me to current user
 		me = data;
 		//For each user connected, send newusrs event to display users in sidebar
@@ -100,8 +108,12 @@ io.on('connection', (socket) => {
 		for (let [k, v] of sockets) {
 			if (k == indexUcUserSocket) {
 				v.emit('secretWord', wordsToPlay[1]);
+				var user = findUserBySocketId(k);
+				updateUserWithSecretWordByUser(user, wordsToPlay[1])
 			} else {
 				v.emit('secretWord', wordsToPlay[0]);
+				var user = findUserBySocketId(k);
+				updateUserWithSecretWordByUser(user, wordsToPlay[0])
 			}
 		}
 	});
@@ -124,24 +136,40 @@ io.on('connection', (socket) => {
 	socket.on('userJustVoted', (data) => {
 		console.log('server : userJustVoted user just voted : ' + data.playerIdWhoSelected + ' and to vote :' + data.actualSelectPlayerId);
 		usersVoted.set(data.playerIdWhoSelected, data.actualSelectPlayerId);
-		console.log(usersVoted);
 		io.emit('userVoted', data);
 		endVoteStep(usersVoted);
 	});
 
 });
 
+function findUserBySocketId(socketId) {
+	for (let [k, v] of usersSocketsId) {
+		if (v == socketId) {
+			console.log("user uc is -> " + k.name);
+			return k;
+		}
+	}
+	return null;
+}
+
+function updateUserWithSecretWordByUser(user, secretWord) {
+	for (var i in users) {
+		if (users[i].id == user.id) {
+			users[i].secretWord = secretWord;
+			console.log("user -> " + users[i].name + " has updated his secret word -> " + users[i].secretWord)
+			break; //Stop this loop, we found it!
+		}
+	}
+}
+
 function endVoteStep(usersVoted) {
-	console.log('usersVoted.size : ' + usersVoted.size);
-	console.log('usersId.length : ' + usersId.length);
 	if (usersVoted.size == usersId.length) {
-		findUserById(usersVoted);
-		io.emit("endVoteStep", "")
+		io.emit("endVoteStep", findUserEliminated(usersVoted))
 		usersVoted.clear();
 	}
 }
 
-function findUserById(usersVoted) {
+function findUserEliminated(usersVoted) {
 	let list = [];
 	for (let [key, value] of usersVoted) {
 		list.push(value);
@@ -161,9 +189,16 @@ function findUserById(usersVoted) {
 	map[Symbol.iterator] = function* () {
 		yield* [...this.entries()].sort((a, b) => a[1] - b[1]);
 	}
-	console.log(map);
-	console.log(map.keys().next().value);
-
+	let userFound;
+	users.forEach(item => {
+		console.log("user : " + item.id + " et id most voted : " + map.keys().next().value);
+		if (item.id == map.keys().next().value) {
+			console.log("found")
+			userFound = item;
+		}
+	})
+	console.log(userFound);
+	return userFound;
 }
 
 function define2RandomWords(words) {
