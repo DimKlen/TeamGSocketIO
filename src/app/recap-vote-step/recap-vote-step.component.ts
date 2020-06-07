@@ -10,13 +10,19 @@ import { User } from '../models/User';
 export class RecapVoteStepComponent implements OnInit {
 
   userEliminated: User
+  civilWord: string;
+
+  escrocWord: string;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
-    this.userEliminated = data.userKicked;
+    console.log("recap : " + data.recap)
+    this.userEliminated = data.recap.userEliminated;
+    this.civilWord = data.recap.words[0];
+    this.escrocWord = data.recap.words[1];
   }
 
   ngOnInit(): void {
-    console.log(this.userEliminated)
+    console.log(this.data)
   }
 
 }

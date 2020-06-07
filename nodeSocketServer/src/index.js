@@ -26,6 +26,8 @@ var usersVoted = new Map();
 var id = 1;
 var actualIndex;
 
+var wordsToPlay;
+
 var nombreTours;
 var comptNombreTours = 1;
 var firstPlayer;
@@ -102,18 +104,18 @@ io.on('connection', (socket) => {
 		console.log('server : playReadyFromClient');
 		firstPlayer = defineFirstPlayer();
 		io.emit('playReadyFromServeur', firstPlayer);
-		var wordsToPlay = define2RandomWords(chooseWordsFromList());
+		wordsToPlay = define2RandomWords(chooseWordsFromList());
 		var indexUcUserSocket = defineUcUserSocket();
 		console.log("user uc is : " + indexUcUserSocket)
 		for (let [k, v] of sockets) {
 			if (k == indexUcUserSocket) {
 				v.emit('secretWord', wordsToPlay[1]);
 				var user = findUserBySocketId(k);
-				updateUserWithSecretWordByUser(user, wordsToPlay[1])
+				updateUserWithByUser(user, wordsToPlay[1], "ESCROC")
 			} else {
 				v.emit('secretWord', wordsToPlay[0]);
 				var user = findUserBySocketId(k);
-				updateUserWithSecretWordByUser(user, wordsToPlay[0])
+				updateUserWithByUser(user, wordsToPlay[0], "CIVIL")
 			}
 		}
 	});
@@ -142,6 +144,15 @@ io.on('connection', (socket) => {
 
 });
 
+function endVoteStep(usersVoted) {
+	if (usersVoted.size == usersId.length) {
+		var dataObject = { userEliminated: findUserEliminated(usersVoted), words: wordsToPlay };
+		console.log("data object : " + dataObject)
+		io.emit("endVoteStep", dataObject)
+		usersVoted.clear();
+	}
+}
+
 function findUserBySocketId(socketId) {
 	for (let [k, v] of usersSocketsId) {
 		if (v == socketId) {
@@ -152,20 +163,14 @@ function findUserBySocketId(socketId) {
 	return null;
 }
 
-function updateUserWithSecretWordByUser(user, secretWord) {
+function updateUserWithByUser(user, secretWord, role) {
 	for (var i in users) {
 		if (users[i].id == user.id) {
 			users[i].secretWord = secretWord;
-			console.log("user -> " + users[i].name + " has updated his secret word -> " + users[i].secretWord)
+			users[i].role = role;
+			console.log("user -> " + users[i].name + " has updated his secret word -> " + users[i].secretWord + " and his role -> " + users[i].role)
 			break; //Stop this loop, we found it!
 		}
-	}
-}
-
-function endVoteStep(usersVoted) {
-	if (usersVoted.size == usersId.length) {
-		io.emit("endVoteStep", findUserEliminated(usersVoted))
-		usersVoted.clear();
 	}
 }
 
@@ -205,7 +210,7 @@ function define2RandomWords(words) {
 	var wordsToPlay = [];
 	var indexWordCivil = Math.floor(Math.random() * words.length);
 	var indexWordUc = Math.floor(Math.random() * words.length);
-
+	console.log("words -> " + words)
 	if (indexWordUc == indexWordCivil) {
 		if (indexWordUc == words.length) {
 			indexWordUc--;

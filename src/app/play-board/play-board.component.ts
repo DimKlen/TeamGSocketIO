@@ -7,6 +7,7 @@ import { WebSocketServiceService } from '../web-socket-service.service';
 import { MessageId } from '../models/MessageId';
 import { Vote } from '../models/Vote';
 import { RecapVoteStepComponent } from '../recap-vote-step/recap-vote-step.component';
+import { Recap } from '../models/recap';
 
 @Component({
   selector: 'app-play-board',
@@ -99,12 +100,13 @@ export class PlayBoardComponent implements OnInit {
     });
 
     this.webSocketService.listen('endVoteStep').subscribe((data) => {
-      let user = data as User;
-      console.log("user : " + user.name + " has been removed")
+      let recap = data as Recap;
+      console.log("user : " + recap.userEliminated);
+      console.log("words : " + recap.words)
       this.dialog.open(RecapVoteStepComponent, {
-        width: '500px',
+        width: '600px',
         height: '200px',
-        data: { userKicked: data }
+        data: { recap: recap }
       });
     });
   }

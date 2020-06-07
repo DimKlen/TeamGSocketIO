@@ -1,1 +1,23 @@
-<p>{{userEliminated.name}} était un role</p>
+<div style="font-size: 22px;">
+    <div>
+        <span style="font-weight: bold;">{{userEliminated.name}}</span>
+        était
+        <span *ngIf="userEliminated.role == 'ESCROC'"
+            style="color: red; font-weight: bold;">{{userEliminated.role}}</span>
+        <span *ngIf="userEliminated.role == 'CIVIL'"
+            style="color: green; font-weight: bold;">{{userEliminated.role}}</span>
+        avec comme mot secret :
+        <span *ngIf="userEliminated.role == 'ESCROC'"
+            style="color: red; font-weight: bold; text-transform: uppercase;">{{userEliminated.secretWord}}</span>
+        <span *ngIf="userEliminated.role == 'CIVIL'"
+            style="color: green; font-weight: bold; text-transform: uppercase;">{{userEliminated.secretWord}}</span>
+    </div>
+    <div style="text-align: center;">
+        <span class="role-civil">CIVIL : </span>
+        <span>{{civilWord}}</span>
+    </div>
+    <div style="text-align: center;">
+        <span class="role-escroc">ESCROC : </span>
+        <span>{{escrocWord}}</span>
+    </div>
+</div>
