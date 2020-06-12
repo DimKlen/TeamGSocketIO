@@ -12,25 +12,35 @@ const fs = require('fs');
 
 const port = process.env.PORT || 3000;
 
-// list of user object
-var users = [];
 //list of users id
 var usersId = [];
-//socket id -> socket object
-var sockets = new Map();
-//user -> socket
-var usersSocketsId = new Map();
+var socketList = [];
+var userToSocket = new Map();
 //key : user id current -> user id selected
 var usersVoted = new Map();
 //count id 
 var id = 1;
-var actualIndex;
-
+var actualIndexOfUsersId;
 var wordsToPlay;
-
 var nombreTours;
 var comptNombreTours = 1;
 var firstPlayer;
+
+const enumRole = {
+	CIVIL: 'CIVIL',
+	ESCROC: 'ESCROC'
+}
+
+function User(name, id) {
+	this.id = id;
+	this.name = name;
+	this.avatar = 'https://api.adorable.io/avatars/' + Math.floor(Math.random() * 1000) + 1;
+	this.score = 0;
+	this.messages = [];
+	this.vote = 0;
+	this.role;
+	this.secretWord;
+}
 
 //TODO path in variable and real path
 app.use(express.static(path.join('D:/Did/socketDid/dist/socketDid')));
@@ -42,90 +52,88 @@ app.use(express.static(path.join('D:/Did/socketDid/dist/socketDid')));
 
 //Listen on each connection on app
 io.on('connection', (socket) => {
+	console.log('---- user connected to socket. Socket id : ' + socket.id + " ----\n");
+	socketList.push(socket);
+
 	//current user
 	var me = null;
-
-	console.log('user connected to socket. New socket id : ' + socket.id);
-
-	sockets.set(socket.id, socket);
 	//Listen disconnection for each user connected
 	socket.on('disconnect', () => {
-		console.log('user disconnected to socket. Removing socket Id : ' + socket.id);
+		console.log('---- user disconnected to socket. Socket Id : ' + socket.id + " ----\n");
 		//if current user is already loged
 		if (me != null) {
+			console.log('---- user was loged. user to remove : ' + JSON.stringify(me) + " ----\n");
 			io.emit('removeusrs', me);
-			//remove user by id
-			users.splice(users.findIndex(item => item.id == me.id), 1);
+			//remove user
+			userToSocket.delete(me);
 			usersId.splice(usersId.indexOf(me.id), 1);
 		}
-		sockets.delete(socket.id);
-
+		//remove socket in socketList
+		socketList.splice(socketList.findIndex(itemSocket => itemSocket.id == socket.id), 1);
 	});
 
 	//Listen on user loged step
 	socket.on('loged', (data) => {
 		//set an unique id to user
-		data.id = id;
+		me = new User(data, id);
 		id++;
-		console.log('user just loged : ' + JSON.stringify(data));
-		//persist user to socket
-		usersSocketsId.set(data, socket.id);
-		//set variable me to current user
-		me = data;
-		//For each user connected, send newusrs event to display users in sidebar
-		for (const k in users) {
-			socket.emit('newusrs', users[k]);
+		console.log("---- user loged -> " + JSON.stringify(me) + "/ socketId -> " + socket.id + "\n");
+
+		for (let [user, sock] of userToSocket) {
+			console.log('already loged ' + JSON.stringify(user) + " ----\n");
+			//send all users in map to this socket
+			socket.emit('newusrs', user);
 		}
-		//push current user in users list
-		users.push(data);
-		usersId.push(data.id);
-		//send newusrs event to display current user in current client
-		io.emit('newusrs', data);
-		socket.emit('yourUser', data);
+		//persist user to socket
+		userToSocket.set(me, socket);
+		//Persist id of each player
+		usersId.push(me.id);
+
+		//send this us to all client
+		io.emit('newusrs', me);
+		//send user only for this socket
+		socket.emit('yourUser', me);
 	});
 
-	//Listen on up undercover players from client
-	socket.on('upUcFromClient', (data) => {
-		console.log('server : upUcFromClient');
-		//emit up uc to all clients
-		io.emit('upUcFromServeur', "");
-	});
-
-	//Listen on down undercover players from client
-	socket.on('downUcFromClient', (data) => {
-		console.log('server : downUcFromClient');
-		//emit down uc to all clients
-		io.emit('downUcFromServeur', "");
-	});
-
+	//Client clicked ready to play
 	socket.on('playReadyFromClient', (data) => {
 		nombreTours = data;
-		console.log("turns number : " + nombreTours);
-		console.log('server : playReadyFromClient');
+		console.log("---- turns number : " + nombreTours + "\n");
+
+		//Get first player id (random) 
 		firstPlayer = defineFirstPlayer();
+		console.log("---- first player id -> " + firstPlayer + "\n")
 		io.emit('playReadyFromServeur', firstPlayer);
+
+		//Define 2 words to play
 		wordsToPlay = define2RandomWords(chooseWordsFromList());
-		var indexUcUserSocket = defineUcUserSocket();
-		console.log("user uc is : " + indexUcUserSocket)
-		for (let [k, v] of sockets) {
-			if (k == indexUcUserSocket) {
-				v.emit('secretWord', wordsToPlay[1]);
-				var user = findUserBySocketId(k);
-				updateUserWithByUser(user, wordsToPlay[1], "ESCROC")
+
+		//get escroc user (random)
+		var socketEscroc = defineEscrocUserSocket();
+
+		for (let [keyUser, sock] of userToSocket) {
+			if (sock.id == socketEscroc.id) {
+				console.log("---- escroc is -> " + keyUser.name + "\n")
+				sock.emit('secretWord', wordsToPlay[1]);
+				updateRoleAndWord(keyUser, wordsToPlay[1], enumRole.ESCROC)
 			} else {
-				v.emit('secretWord', wordsToPlay[0]);
-				var user = findUserBySocketId(k);
-				updateUserWithByUser(user, wordsToPlay[0], "CIVIL")
+				sock.emit('secretWord', wordsToPlay[0]);
+				updateRoleAndWord(keyUser, wordsToPlay[0], enumRole.CIVIL)
 			}
 		}
 	});
 
-	socket.on('clientMessageNextPlayer', (data) => {
-		console.log('server : clientNextPlayer message : ' + data.messageFromPreviousClient + ' and actualId :' + data.actualId);
-		var idNextToPlay = nextPlayerToPlay();
-		var objectMessageAndId = { messageFromPreviousClient: data.messageFromPreviousClient, nextPlayerId: idNextToPlay, actualId: data.actualId };
-		io.emit('serveurMessageNextPlayer', objectMessageAndId);
-		if (idNextToPlay == firstPlayer) {
+	//Fired when a client send a message
+	socket.on('clientMessage', (data) => {
+		updateMessageList(data.actualId, data.messageFromPreviousClient);
+		var userActual = findUserById(data.actualId);
+		console.log("-- message : " + userActual.messages + " from " + userActual.name + "\n");
+		var message = { messageFromPreviousClient: data.messageFromPreviousClient, actualId: data.actualId };
+		io.emit('serveurMessage', message);
+
+		var playerIdNextToPlay = nextPlayerToPlay();
+		io.emit('serveurIdNextToPlay', playerIdNextToPlay);
+		if (playerIdNextToPlay == firstPlayer) {
 			if (comptNombreTours == nombreTours) {
 				io.emit('endTurn', "");
 				comptNombreTours = 1;
@@ -135,114 +143,134 @@ io.on('connection', (socket) => {
 		}
 	});
 
+	//Fired when a client click on player to vote against him
 	socket.on('userJustVoted', (data) => {
-		console.log('server : userJustVoted user just voted : ' + data.playerIdWhoSelected + ' and to vote :' + data.actualSelectPlayerId);
-		usersVoted.set(data.playerIdWhoSelected, data.actualSelectPlayerId);
-		io.emit('userVoted', data);
-		endVoteStep(usersVoted);
-	});
+		console.log("\n---- " + findUserById(data.idVoter).name + ' has voted against ' + data.userVoted.name);
+		usersVoted.set(data.idVoter, data.userVoted.id);
+		updateVotesByUsers();
+		io.emit('userVoted', Array.from(userToSocket.keys()));
 
+		for (let [keyUser, sock] of userToSocket) {
+			console.log("- user " + keyUser.name + " has " + keyUser.vote + " on him")
+		}
+		if (usersVoted.size == usersId.length) {
+			endVoteFunction(usersVoted);
+		}
+	});
 });
 
-function endVoteStep(usersVoted) {
-	if (usersVoted.size == usersId.length) {
-		var dataObject = { userEliminated: findUserEliminated(usersVoted), words: wordsToPlay };
-		console.log("data object : " + dataObject)
-		io.emit("endVoteStep", dataObject)
-		usersVoted.clear();
-	}
-}
-
-function findUserBySocketId(socketId) {
-	for (let [k, v] of usersSocketsId) {
-		if (v == socketId) {
-			console.log("user uc is -> " + k.name);
-			return k;
-		}
-	}
-	return null;
-}
-
-function updateUserWithByUser(user, secretWord, role) {
-	for (var i in users) {
-		if (users[i].id == user.id) {
-			users[i].secretWord = secretWord;
-			users[i].role = role;
-			console.log("user -> " + users[i].name + " has updated his secret word -> " + users[i].secretWord + " and his role -> " + users[i].role)
-			break; //Stop this loop, we found it!
+//Return an user if found
+function findUserById(id) {
+	for (let [keyUser, sock] of userToSocket) {
+		if (keyUser.id == id) {
+			return keyUser;
 		}
 	}
 }
 
-function findUserEliminated(usersVoted) {
-	let list = [];
-	for (let [key, value] of usersVoted) {
-		list.push(value);
+//Update vote on users by userVoted map
+function updateVotesByUsers() {
+	//Init all votes of user by 0
+	for (let [keyUser, sock] of userToSocket) {
+		keyUser.vote = 0;
 	}
-	console.log(list);
-
-	var occurrences = {};
-	for (var i = 0, j = list.length; i < j; i++) {
-		occurrences[list[i]] = (occurrences[list[i]] || 0) + 1;
-	}
-
-	const map = new Map();
-	Object.keys(occurrences).forEach(key => {
-		map.set(key, occurrences[key]);
-	});
-
-	map[Symbol.iterator] = function* () {
-		yield* [...this.entries()].sort((a, b) => a[1] - b[1]);
-	}
-	let userFound;
-	users.forEach(item => {
-		console.log("user : " + item.id + " et id most voted : " + map.keys().next().value);
-		if (item.id == map.keys().next().value) {
-			console.log("found")
-			userFound = item;
+	//loop on map userVoted and users map and incremente vote of user when idVoted = user.id
+	for (let [idVoter, idVoted] of usersVoted) {
+		for (let [keyUser, sock] of userToSocket) {
+			if (keyUser.id == idVoted) {
+				keyUser.vote++;
+			}
 		}
-	})
-	console.log(userFound);
-	return userFound;
+	}
+}
+
+function updateScore(userSacrificied) {
+	//Civils win
+	if (userSacrificied.role == enumRole.ESCROC) {
+		for (let [keyUser, sock] of userToSocket) {
+			if (keyUser.role == enumRole.CIVIL) {
+				keyUser.score = keyUser.score + 100;
+			}
+		}
+	}
+	else {
+		for (let [keyUser, sock] of userToSocket) {
+			if (keyUser.role == enumRole.ESCROC) {
+				keyUser.score = keyUser.score + 300;
+			}
+		}
+	}
+	io.emit('updateScores', Array.from(userToSocket.keys()));
+}
+
+function endVoteFunction(usersVoted) {
+	let userSacrificied = findUserSacricified(usersVoted);
+	var dataObject = { userSacrificied: userSacrificied, words: wordsToPlay };
+	console.log("-- user sacricified -> " + userSacrificied.name + " with " + userSacrificied.vote + " votes")
+	io.emit("endVoteStep", dataObject)
+	updateScore(userSacrificied);
+	usersVoted.clear();
+}
+
+function updateMessageList(idUser, message) {
+	var userUpdate = findUserById(idUser);
+	userUpdate.messages.push(message);
+}
+function updateRoleAndWord(user, secretWord, role) {
+	user.role = role;
+	user.secretWord = secretWord;
+}
+
+function findUserSacricified() {
+	let userTemp = userToSocket.keys().next().value;
+	for (let [keyUser, sock] of userToSocket) {
+		if (keyUser.vote > userTemp.vote) {
+			userTemp = keyUser;
+		}
+	}
+	return userTemp;
 }
 
 function define2RandomWords(words) {
 	var wordsToPlay = [];
 	var indexWordCivil = Math.floor(Math.random() * words.length);
 	var indexWordUc = Math.floor(Math.random() * words.length);
-	console.log("words -> " + words)
+	console.log("---- gettings words -> " + words + "\n")
 	if (indexWordUc == indexWordCivil) {
 		if (indexWordUc == words.length) {
 			indexWordUc--;
 		} else {
 			indexWordUc++;
 		}
-	} else {
-		wordsToPlay.push(words[indexWordCivil])
-		wordsToPlay.push(words[indexWordUc])
 	}
-	console.log("wordsToPlay : " + wordsToPlay);
+	wordsToPlay.push(words[indexWordCivil])
+	wordsToPlay.push(words[indexWordUc])
+	console.log("---- wordsToPlay -> " + wordsToPlay + "\n");
 	return wordsToPlay;
 
 }
 
-function defineUcUserSocket() {
-	let items = Array.from(sockets.keys());
+function defineEscrocUserSocket() {
+	let items = Array.from(userToSocket.values());
 	return items[Math.floor(Math.random() * items.length)];
 }
 
+/**
+ * Get random id on usersId list and persist index random (actualIndexOfUsersId)
+ */
 function defineFirstPlayer() {
-	actualIndex = Math.floor(Math.random() * usersId.length);
-	return usersId[actualIndex];
+	actualIndexOfUsersId = Math.floor(Math.random() * usersId.length);
+	return usersId[actualIndexOfUsersId];
 }
 
 function nextPlayerToPlay() {
-	if (usersId[actualIndex] == usersId[usersId.length - 1]) {
-		actualIndex = 0;
+	//if end of list, then return value of index = 0
+	if (usersId[actualIndexOfUsersId] == usersId[usersId.length - 1]) {
+		actualIndexOfUsersId = 0;
 		return usersId[0];
 	} else {
-		actualIndex++;
-		return usersId[actualIndex];
+		actualIndexOfUsersId++;
+		return usersId[actualIndexOfUsersId];
 	}
 }
 
@@ -265,6 +293,6 @@ function chooseWordsFromList() {
 }
 
 server.listen(port, () => {
-	console.log(`started on port: ${port}`);
+	console.log(`started on port: ${port}\n`);
 });
 

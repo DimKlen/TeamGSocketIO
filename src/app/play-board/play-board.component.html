@@ -13,7 +13,7 @@
             <div class="div-info">
                 <img matListAvatar class="avatar-player" src={{user.avatar}}>
                 <mat-line class="player-name">{{user.name}}</mat-line>
-                <mat-line class="votes" [hidden]="!endTurn">{{user.votes}}</mat-line>
+                <mat-line class="votes" [hidden]="!endTurn">{{user.vote}}</mat-line>
             </div>
             <mat-divider></mat-divider>
             <div *ngFor="let message of user.messages">
@@ -24,7 +24,7 @@
             <div class="div-info">
                 <img matListAvatar class="avatar-player" src={{user.avatar}}>
                 <mat-line class="player-name">{{user.name}}</mat-line>
-                <mat-line class="votes" [hidden]="!endTurn">{{user.votes}}</mat-line>
+                <mat-line class="votes" [hidden]="!endTurn">{{user.vote}}</mat-line>
             </div>
             <mat-divider></mat-divider>
             <div *ngFor="let message of user.messages">

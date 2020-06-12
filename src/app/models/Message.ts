@@ -1,5 +1,4 @@
 export class MessageId {
-    nextPlayerId: number;
     messageFromPreviousClient: string;
     actualId: number;
 

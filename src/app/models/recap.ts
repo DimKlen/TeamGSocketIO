@@ -1,7 +1,7 @@
 import { User } from './User';
 
 export class Recap {
-    userEliminated: User;
+    userSacrificied: User;
     words: string[] = [];
 
     constructor() {

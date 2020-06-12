@@ -1,16 +1,16 @@
 <div style="font-size: 22px;">
     <div>
-        <span style="font-weight: bold;">{{userEliminated.name}}</span>
+        <span style="font-weight: bold;">{{userSacrificied.name}}</span>
         était
-        <span *ngIf="userEliminated.role == 'ESCROC'"
-            style="color: red; font-weight: bold;">{{userEliminated.role}}</span>
-        <span *ngIf="userEliminated.role == 'CIVIL'"
-            style="color: green; font-weight: bold;">{{userEliminated.role}}</span>
+        <span *ngIf="userSacrificied.role == 'ESCROC'"
+            style="color: red; font-weight: bold;">{{userSacrificied.role}}</span>
+        <span *ngIf="userSacrificied.role == 'CIVIL'"
+            style="color: green; font-weight: bold;">{{userSacrificied.role}}</span>
         avec comme mot secret :
-        <span *ngIf="userEliminated.role == 'ESCROC'"
-            style="color: red; font-weight: bold; text-transform: uppercase;">{{userEliminated.secretWord}}</span>
-        <span *ngIf="userEliminated.role == 'CIVIL'"
-            style="color: green; font-weight: bold; text-transform: uppercase;">{{userEliminated.secretWord}}</span>
+        <span *ngIf="userSacrificied.role == 'ESCROC'"
+            style="color: red; font-weight: bold; text-transform: uppercase;">{{userSacrificied.secretWord}}</span>
+        <span *ngIf="userSacrificied.role == 'CIVIL'"
+            style="color: green; font-weight: bold; text-transform: uppercase;">{{userSacrificied.secretWord}}</span>
     </div>
     <div style="text-align: center;">
         <span class="role-civil">CIVIL : </span>

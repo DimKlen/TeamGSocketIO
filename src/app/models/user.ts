@@ -4,7 +4,7 @@ export class User {
     avatar: string;
     score: number = 0;
     messages: string[] = [];
-    votes: number = 0;
+    vote: number = 0;
     secretWord: string;
     role: string;
 

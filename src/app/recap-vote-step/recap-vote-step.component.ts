@@ -9,14 +9,14 @@ import { User } from '../models/User';
 })
 export class RecapVoteStepComponent implements OnInit {
 
-  userEliminated: User
+  userSacrificied: User
   civilWord: string;
 
   escrocWord: string;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
     console.log("recap : " + data.recap)
-    this.userEliminated = data.recap.userEliminated;
+    this.userSacrificied = data.recap.userSacrificied;
     this.civilWord = data.recap.words[0];
     this.escrocWord = data.recap.words[1];
   }

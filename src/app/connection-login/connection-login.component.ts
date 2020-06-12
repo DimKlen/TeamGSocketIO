@@ -23,11 +23,12 @@ export class ConnectionLoginComponent implements OnInit {
   rejoindre(): void {
     if (this.nameInput) {
       //Emit loged event to notif server with a new user
-      this.webSocketService.emit('loged', new User(this.nameInput));
+      this.webSocketService.emit('loged', this.nameInput);
+      //this.webSocketService.emit('loged', new User(this.nameInput));
       //TOOD server
-      //this.router.navigateByUrl("/undercover");
+      this.router.navigateByUrl("/undercover");
       //TODO TEST
-      let recap = new Recap;
+      /*let recap = new Recap;
       recap.words[0] = "Ketchup";
       recap.words[1] = "Barbecue";
 
@@ -39,7 +40,7 @@ export class ConnectionLoginComponent implements OnInit {
         width: '600px',
         height: '200px',
         data: { recap: recap }
-      });
+      });*/
     }
   }
 }

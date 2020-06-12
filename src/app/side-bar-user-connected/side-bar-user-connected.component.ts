@@ -66,6 +66,11 @@ export class SideBarUserConnectedComponent implements OnInit {
       this.dataService.setMeUser(user);
     })
 
+    this.webSocketService.listen('updateScores').subscribe((data) => {
+      let usersUpdated = data as User[];
+      this.dataService.updateArrayUser(usersUpdated);
+    })
+
 
     /**
      * listen on removed user and remove this user in users list
