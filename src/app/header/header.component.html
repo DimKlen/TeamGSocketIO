@@ -1,13 +1,12 @@
 <div class="app-layout-header">
-    <div class="div-notif">
+    <div class="div-notif" *ngIf="dialogOpen == false">
         {{notif}}
     </div>
-    <div class="div-secret-word">
+    <div class="div-secret-word" *ngIf="dialogOpen == false">
         Ton mot secret est : {{motSecret}}
     </div>
-    <div>
-        <button>aide</button>
-        <button [hidden]="!isAdmin()">nouvel squad</button>
-        <button [hidden]="!isAdmin()">reset</button>
+    <div *ngIf="dialogOpen == false">
+        <button [hidden]="!isAdmin()" (click)="newWords()">new</button>
+        <!--<button [hidden]="!isAdmin()">reset</button>-->
     </div>
 </div>

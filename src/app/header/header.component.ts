@@ -14,12 +14,18 @@ export class HeaderComponent implements OnInit {
 
   motSecret: string;
 
+  endTurn: boolean;
+
+  dialogOpen: boolean = false;
+
+  users: User[];
+
   constructor(private dataService: DataServiceService, private webSocketService: WebSocketServiceService) { }
   ngOnInit(): void {
 
-    //TODO TEST
-    //this.motSecret = "Samsung";
     this.dataService.isEndTurn().subscribe(endTurn => {
+      this.endTurn = endTurn;
+      console.log(" endTurn if : " + this.endTurn)
       if (endTurn) {
         this.notif = "Cliquer sur un joueur pour voter contre lui.";
         console.log(this.notif);
@@ -27,8 +33,8 @@ export class HeaderComponent implements OnInit {
         this.dataService.getIdFirstPlayer().subscribe(id => {
           this.dataService.getArrayUser().subscribe(result => {
             //get users list from service (from side bar connected users)
-            let users = result as User[];
-            users.forEach(user => {
+            this.users = result as User[];
+            this.users.forEach(user => {
               if (user.id == id) {
                 this.notif = "C'est à " + user.name + " de décrire son mot.";
               }
@@ -43,9 +49,28 @@ export class HeaderComponent implements OnInit {
       this.motSecret = secretWord as string;
     });
 
+    this.dataService.isDialogOpen().subscribe(open => {
+      console.log("header chgmnt => " + open)
+      this.dialogOpen = open;
+    })
+  }
+
+  newWords() {
+    console.log("new words query");
+    this.webSocketService.emit("newWords", "");
   }
 
   isAdmin(): boolean {
-    return false;
+    let me = this.dataService.meUser
+    if (this.users != null) {
+      if (this.users[0].id == me.id) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    else {
+      return false;
+    }
   }
 }

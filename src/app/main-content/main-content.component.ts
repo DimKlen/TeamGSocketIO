@@ -8,13 +8,9 @@ import { DataServiceService } from '../data-service.service';
 })
 export class MainContentComponent implements OnInit {
 
-  //TODO TEST
-  constructor(/*private dataService: DataServiceService*/) {
+  constructor() {
   }
 
   ngOnInit(): void {
-    //TODO TEST
-    //this.dataService.updateEndTurn(true);
   }
-
 }

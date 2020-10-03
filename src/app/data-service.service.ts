@@ -17,6 +17,9 @@ export class DataServiceService {
   endTurnSource: BehaviorSubject<boolean> = new BehaviorSubject(null);
   endTurn = this.endTurnSource.asObservable();
 
+  dialogOpenSource: BehaviorSubject<boolean> = new BehaviorSubject(null);
+  dialogOpen = this.dialogOpenSource.asObservable();
+
   meUser: User;
 
   constructor() { }
@@ -30,6 +33,14 @@ export class DataServiceService {
 
   getArrayUser(): Observable<User[]> {
     return this.userData;
+  }
+
+  updateDialogOpen(dialogOpen: boolean) {
+    this.dialogOpenSource.next(dialogOpen);
+  }
+
+  isDialogOpen(): Observable<boolean> {
+    return this.dialogOpen;
   }
 
   updateEndTurn(endTurn: boolean) {

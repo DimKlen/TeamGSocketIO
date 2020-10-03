@@ -20,50 +20,39 @@ export class PlayBoardComponent implements OnInit {
   users: User[] = [];
   //users id
   usersId: number[] = [];
-
+  //list of messages actual
   listMessages: string[] = [];
-
   //get message on input
   message: string;
   //player id actual
   playerTurn: number;
-
+  //State of inning
   endTurn: boolean = false;
-  //TODO TEST
-  //actualIndex: number;
 
   selectPlayer: number;
 
   constructor(public dialog: MatDialog, private dataService: DataServiceService, private webSocketService: WebSocketServiceService) { }
 
   ngOnInit(): void {
-    this.dialog.open(ConfigurationPlayComponent, {
+    const dialogConfig = this.dialog.open(ConfigurationPlayComponent, {
       disableClose: true,
-      width: '400px',
+      width: '500px',
       height: '300px'
     });
-    //TODO TEST
-    //this.dataService.updateEndTurn(true);
+
     this.dataService.isEndTurn().subscribe(endTurn => {
       this.endTurn = endTurn;
     });
 
 
-    this.dialog.afterAllClosed.subscribe(() => {
+    dialogConfig.afterClosed().subscribe(() => {
       this.dataService.getArrayUser().subscribe(users => {
-        //TODO TEST
-        //this.endTurn = true;
-        //get users list from service (from side bar connected users)
         this.users = users;
-        //TODO TEST
-        //this.playerTurn = this.defineFirstPlayerId();
-        //this.dataService.updateIdFirstPlayer(this.playerTurn);
-        //
-        //TODO a remettre quand serveur
         this.dataService.getIdFirstPlayer().subscribe(id => {
           this.playerTurn = id;
         });
       });
+      this.dataService.updateDialogOpen(false);
     })
 
     //Listen when message comes from server (message from player)
@@ -81,6 +70,24 @@ export class PlayBoardComponent implements OnInit {
       })
     })
 
+    this.webSocketService.listen('newInning').subscribe((data) => {
+      let users = data as User[];
+      console.log('users new inning event : ', users);
+      //update users
+      this.dataService.updateArrayUser(users);
+      this.selectPlayer = null;
+      this.listMessages = [];
+
+    })
+
+    this.webSocketService.listen('draw').subscribe((data) => {
+      let users = data as User[];
+      console.log('users draw event : ', users);
+      //update users
+      this.dataService.updateArrayUser(users);
+      this.selectPlayer = null;
+    })
+
     //Listen when a player end his turn, idnext player in data
     this.webSocketService.listen('serveurIdNextToPlay').subscribe((data) => {
       console.log('next player id : data');
@@ -89,11 +96,8 @@ export class PlayBoardComponent implements OnInit {
 
     //Listen when endturn comes
     this.webSocketService.listen('endTurn').subscribe((data) => {
-      this.dataService.updateEndTurn(true);
-      // this.dataService.isEndTurn().subscribe(endTurn => {
-      //   this.endTurn = endTurn;
-      //   console.log("end turn");
-      // })
+      console.log("end turn : " + data)
+      this.dataService.updateEndTurn(data as boolean);
     });
 
     //Listen when someone vote on an user
@@ -106,12 +110,19 @@ export class PlayBoardComponent implements OnInit {
       let recap = data as Recap;
       console.log("user : " + recap.userSacrificied);
       console.log("words : " + recap.words)
-      this.dialog.open(RecapVoteStepComponent, {
+      const dialogRecap = this.dialog.open(RecapVoteStepComponent, {
         width: '600px',
         height: '200px',
         data: { recap: recap }
       });
+
+      dialogRecap.afterClosed().subscribe(() => {
+        console.log("catch closed");
+        this.dataService.updateDialogOpen(false);
+      })
     });
+
+    this
   }
 
   updateUserVote(userVoted) {
@@ -129,12 +140,7 @@ export class PlayBoardComponent implements OnInit {
     //If not me and not player already voted, then
     if (user.id != this.dataService.meUser.id && this.selectPlayer != user.id) {
       let vote = new Vote(this.dataService.meUser.id, user);
-      // let vote = new Vote(this.selectPlayer, this.dataService.meUser.id, user.id);
-      //TODO TEST
-      //this.searchPlayerByIdAndremoveAVote(this.selectPlayer);
       this.selectPlayer = user.id;
-      //TODO TEST
-      //this.searchPlayerByIdAndAddVote(this.selectPlayer);
       this.webSocketService.emit("userJustVoted", vote)
     }
   }
@@ -151,10 +157,6 @@ export class PlayBoardComponent implements OnInit {
         this.webSocketService.emit('clientMessage', message);
         //clear input
         this.message = "";
-        //TODO TEST
-        /*this.playerTurn = this.nextPlayerToPlay();
-        this.dataService.updateIdFirstPlayer(this.playerTurn);*/
-        //
       }
     }
   }
@@ -168,34 +170,4 @@ export class PlayBoardComponent implements OnInit {
       }
     }
   }
-
-  /**
-   * define who is the next player to play
-   */
-  //TODO TEST
-  /*nextPlayerToPlay(): number {
-    if (this.playerTurn == this.usersId[this.usersId.length - 1]) {
-      this.actualIndex = 0;
-      return this.usersId[0];
-    } else {
-      this.actualIndex++;
-      return this.usersId[this.actualIndex];
-    }
-  }*/
-
-  /**
-   * define first player. called once, when component is called for the first time
-   */
-  //TODO TEST
-  /*defineFirstPlayerId(): number {
-    //regroup all users id in list
-    this.users.forEach(user => {
-      this.usersId.push(user.id);
-    });
-    //return index 
-    this.actualIndex = Math.floor(Math.random() * this.usersId.length);
-    //return value of actualIndex (random)
-    return this.usersId[this.actualIndex];
-  }*/
-
 }
